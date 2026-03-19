@@ -65,7 +65,7 @@ export async function submitApplication(formData: FormData) {
   if (!formData.has("paymentConfirmed")) {
     redirect(
       `/bourses/${scholarship.slug}?error=${encodeURIComponent(
-        "Merci d'effectuer le paiement des frais d'etude de dossier puis de confirmer cette etape.",
+        "Merci de finaliser le formulaire, d'effectuer le paiement des frais d'etude de dossier puis de confirmer cette etape.",
       )}#formulaire-candidature`,
     );
   }
