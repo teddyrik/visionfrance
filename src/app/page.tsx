@@ -1,8 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import { PublicHeader } from "@/components/public-header";
 import { ScholarshipCard } from "@/components/scholarship-card";
 import { SiteFooter } from "@/components/site-footer";
 import { getScholarships } from "@/lib/data";
+import { editorialMedia } from "@/lib/editorial-media";
 import { firstQueryValue } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -141,6 +143,51 @@ export default async function Home({ searchParams }: HomePageProps) {
                 </div>
 
                 <div className="hero__stats">
+                  <div className="hero-photo-grid">
+                    <figure className="hero-photo-card hero-photo-card--wide">
+                      <Image
+                        src={editorialMedia.studentFocus.src}
+                        alt={editorialMedia.studentFocus.alt}
+                        width={editorialMedia.studentFocus.width}
+                        height={editorialMedia.studentFocus.height}
+                        className="hero-photo-card__image"
+                        priority
+                      />
+                      <figcaption className="hero-photo-card__body">
+                        <strong>{editorialMedia.studentFocus.title}</strong>
+                        <span>{editorialMedia.studentFocus.caption}</span>
+                      </figcaption>
+                    </figure>
+
+                    <figure className="hero-photo-card">
+                      <Image
+                        src={editorialMedia.parisCampus.src}
+                        alt={editorialMedia.parisCampus.alt}
+                        width={editorialMedia.parisCampus.width}
+                        height={editorialMedia.parisCampus.height}
+                        className="hero-photo-card__image"
+                      />
+                      <figcaption className="hero-photo-card__body">
+                        <strong>{editorialMedia.parisCampus.title}</strong>
+                        <span>{editorialMedia.parisCampus.caption}</span>
+                      </figcaption>
+                    </figure>
+
+                    <figure className="hero-photo-card">
+                      <Image
+                        src={editorialMedia.parisUniversity.src}
+                        alt={editorialMedia.parisUniversity.alt}
+                        width={editorialMedia.parisUniversity.width}
+                        height={editorialMedia.parisUniversity.height}
+                        className="hero-photo-card__image"
+                      />
+                      <figcaption className="hero-photo-card__body">
+                        <strong>{editorialMedia.parisUniversity.title}</strong>
+                        <span>{editorialMedia.parisUniversity.caption}</span>
+                      </figcaption>
+                    </figure>
+                  </div>
+
                   <article className="hero-highlight__card">
                     <span className="mini-label">Catalogue actualisé</span>
                     <strong>Fiches vérifiées à partir des publications officielles</strong>

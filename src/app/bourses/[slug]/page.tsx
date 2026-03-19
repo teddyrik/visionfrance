@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { submitApplication } from "@/app/actions";
@@ -6,6 +7,7 @@ import { ScholarshipApplicationForm } from "@/components/scholarship-application
 import { SiteFooter } from "@/components/site-footer";
 import { StatusBadge } from "@/components/status-badge";
 import { getScholarshipBySlug } from "@/lib/data";
+import { editorialMedia } from "@/lib/editorial-media";
 import {
   firstQueryValue,
   formatScholarshipDeadline,
@@ -158,6 +160,36 @@ export default async function ScholarshipPage({
                   >
                     Ouvrir la source officielle
                   </a>
+                </div>
+
+                <div className="detail-visual-grid">
+                  <figure className="detail-visual-card detail-visual-card--wide">
+                    <Image
+                      src={editorialMedia.parisCampus.src}
+                      alt={editorialMedia.parisCampus.alt}
+                      width={editorialMedia.parisCampus.width}
+                      height={editorialMedia.parisCampus.height}
+                      className="detail-visual-card__image"
+                    />
+                    <figcaption className="detail-visual-card__body">
+                      <strong>{editorialMedia.parisCampus.title}</strong>
+                      <span>{editorialMedia.parisCampus.caption}</span>
+                    </figcaption>
+                  </figure>
+
+                  <figure className="detail-visual-card">
+                    <Image
+                      src={editorialMedia.studentFocus.src}
+                      alt={editorialMedia.studentFocus.alt}
+                      width={editorialMedia.studentFocus.width}
+                      height={editorialMedia.studentFocus.height}
+                      className="detail-visual-card__image"
+                    />
+                    <figcaption className="detail-visual-card__body">
+                      <strong>{editorialMedia.studentFocus.title}</strong>
+                      <span>{editorialMedia.studentFocus.caption}</span>
+                    </figcaption>
+                  </figure>
                 </div>
 
                 <div className="panel">
