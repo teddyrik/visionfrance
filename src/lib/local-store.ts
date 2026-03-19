@@ -314,6 +314,9 @@ export async function saveApplication(input: NewApplicationInput, files: File[])
       ),
     ];
 
+    statusHistory[0]!.note =
+      `Dossier depose par le candidat sur la plateforme Vision France. Reference de paiement : ${input.paymentReference}.`;
+
     const application: Application = {
       id: applicationId,
       reference: createApplicationReference(),
@@ -326,6 +329,7 @@ export async function saveApplication(input: NewApplicationInput, files: File[])
         lastName: input.lastName,
         email: input.email,
         phone: input.phone,
+        paymentReference: input.paymentReference,
         country: input.country,
         birthDate: input.birthDate,
         currentLevel: input.currentLevel,

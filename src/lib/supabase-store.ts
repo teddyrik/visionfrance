@@ -382,6 +382,9 @@ export async function saveApplicationSupabase(
     },
   ];
 
+  history[0]!.note =
+    `Dossier depose par le candidat sur la plateforme Vision France. Reference de paiement : ${input.paymentReference}.`;
+
   const [row] = await requestSupabase<ApplicationRow[]>(
     "/rest/v1/applications",
     {
@@ -402,6 +405,7 @@ export async function saveApplicationSupabase(
           lastName: input.lastName,
           email: input.email,
           phone: input.phone,
+          paymentReference: input.paymentReference,
           country: input.country,
           birthDate: input.birthDate,
           currentLevel: input.currentLevel,

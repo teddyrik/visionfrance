@@ -53,7 +53,7 @@ async function deliverEmail(payload: EmailPayload) {
 
   if (!response.ok) {
     const detail = await response.text();
-    throw new Error(`Échec de l'envoi email : ${detail}`);
+    throw new Error(`Echec de l'envoi email : ${detail}`);
   }
 }
 
@@ -61,13 +61,17 @@ export async function sendApplicationReceipt(
   application: Application,
   scholarship: Scholarship,
 ) {
-  const subject = `[Vision France] Candidature reçue - ${scholarship.title}`;
+  const paymentLine = application.applicant.paymentReference
+    ? `<p>Reference de paiement enregistree : <strong>${application.applicant.paymentReference}</strong>.</p>`
+    : "";
+  const subject = `[Vision France] Candidature recue - ${scholarship.title}`;
   const html = wrapEmail(
-    "Votre dossier a bien été reçu",
+    "Votre dossier a bien ete recu",
     `
       <p>Bonjour ${application.applicant.firstName},</p>
-      <p>Votre candidature <strong>${application.reference}</strong> pour <strong>${scholarship.title}</strong> a été enregistrée avec succès.</p>
-      <p>Prochaine étape : contrôle administratif du dossier puis mise en instruction. Vous recevrez un email à chaque évolution de statut.</p>
+      <p>Votre candidature <strong>${application.reference}</strong> pour <strong>${scholarship.title}</strong> a ete enregistree avec succes.</p>
+      ${paymentLine}
+      <p>Prochaine etape : controle administratif du dossier puis mise en instruction. Vous recevrez un email a chaque evolution de statut.</p>
       <p>Date limite du programme : <strong>${formatDate(scholarship.deadline)}</strong>.</p>
     `,
   );
@@ -76,7 +80,7 @@ export async function sendApplicationReceipt(
     to: application.applicant.email,
     subject,
     html,
-    text: `Votre candidature ${application.reference} pour ${scholarship.title} a été reçue sur Vision France.`,
+    text: `Votre candidature ${application.reference} pour ${scholarship.title} a ete recue sur Vision France.${application.applicant.paymentReference ? ` Reference de paiement : ${application.applicant.paymentReference}.` : ""}`,
   });
 }
 
@@ -88,14 +92,18 @@ export async function sendInstitutionNewApplication(
     return;
   }
 
+  const paymentLine = application.applicant.paymentReference
+    ? `<strong>Reference de paiement :</strong> ${application.applicant.paymentReference}<br />`
+    : "";
   const html = wrapEmail(
-    "Nouveau dossier reçu sur Vision France",
+    "Nouveau dossier recu sur Vision France",
     `
-      <p>Un nouveau dossier vient d'être déposé sur la plateforme Vision France.</p>
+      <p>Un nouveau dossier vient d'etre depose sur la plateforme Vision France.</p>
       <p><strong>Candidat :</strong> ${application.applicant.firstName} ${application.applicant.lastName}<br />
-      <strong>Référence :</strong> ${application.reference}<br />
+      <strong>Reference :</strong> ${application.reference}<br />
+      ${paymentLine}
       <strong>Programme :</strong> ${scholarship.title}</p>
-      <p>Le dossier reste visible dans l'administration centrale jusqu'à son éventuelle transmission à votre établissement.</p>
+      <p>Le dossier reste visible dans l'administration centrale jusqu'a son eventuelle transmission a votre etablissement.</p>
     `,
   );
 
@@ -103,7 +111,7 @@ export async function sendInstitutionNewApplication(
     to: scholarship.institutionEmail,
     subject: `[Vision France] Nouveau dossier - ${application.reference}`,
     html,
-    text: `Nouveau dossier ${application.reference} reçu pour ${scholarship.title}.`,
+    text: `Nouveau dossier ${application.reference} recu pour ${scholarship.title}.${application.applicant.paymentReference ? ` Reference de paiement : ${application.applicant.paymentReference}.` : ""}`,
   });
 }
 
@@ -114,18 +122,18 @@ export async function sendApplicationStatusUpdate(
 ) {
   const status = getApplicationStatusMeta(application.status);
   const html = wrapEmail(
-    "Mise à jour de votre candidature",
+    "Mise a jour de votre candidature",
     `
       <p>Bonjour ${application.applicant.firstName},</p>
       <p>Le statut de votre candidature <strong>${application.reference}</strong> est maintenant : <strong>${status.label}</strong>.</p>
-      <p>${note || "Aucune précision complémentaire n'a été ajoutée pour cette étape."}</p>
-      <p>Programme concerné : <strong>${scholarship.title}</strong>.</p>
+      <p>${note || "Aucune precision complementaire n'a ete ajoutee pour cette etape."}</p>
+      <p>Programme concerne : <strong>${scholarship.title}</strong>.</p>
     `,
   );
 
   await deliverEmail({
     to: application.applicant.email,
-    subject: `[Vision France] Statut mis à jour - ${status.label}`,
+    subject: `[Vision France] Statut mis a jour - ${status.label}`,
     html,
     text: `Le statut de votre candidature ${application.reference} est maintenant ${status.label}.`,
   });
@@ -141,13 +149,13 @@ export async function sendInstitutionForwardedUpdate(
   }
 
   const html = wrapEmail(
-    "Dossier transmis à l'établissement",
+    "Dossier transmis a l'etablissement",
     `
-      <p>Le dossier suivant vient d'être transmis à votre établissement pour poursuite de procédure.</p>
-      <p><strong>Référence :</strong> ${application.reference}<br />
+      <p>Le dossier suivant vient d'etre transmis a votre etablissement pour poursuite de procedure.</p>
+      <p><strong>Reference :</strong> ${application.reference}<br />
       <strong>Candidat :</strong> ${application.applicant.firstName} ${application.applicant.lastName}<br />
       <strong>Programme :</strong> ${scholarship.title}</p>
-      <p>${note || "Merci de poursuivre l'examen pédagogique dans votre circuit interne."}</p>
+      <p>${note || "Merci de poursuivre l'examen pedagogique dans votre circuit interne."}</p>
     `,
   );
 
@@ -155,6 +163,6 @@ export async function sendInstitutionForwardedUpdate(
     to: scholarship.institutionEmail,
     subject: `[Vision France] Dossier transmis - ${application.reference}`,
     html,
-    text: `Le dossier ${application.reference} a été transmis à ${scholarship.institution}.`,
+    text: `Le dossier ${application.reference} a ete transmis a ${scholarship.institution}.`,
   });
 }

@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { submitApplication } from "@/app/actions";
 import { PublicHeader } from "@/components/public-header";
 import { SiteFooter } from "@/components/site-footer";
 import { StatusBadge } from "@/components/status-badge";
-import { submitApplication } from "@/app/actions";
 import { countries, getCountryFlag } from "@/lib/countries";
 import { getScholarshipBySlug } from "@/lib/data";
 import {
@@ -19,6 +19,9 @@ type ScholarshipPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
+const applicationFeePaymentUrl =
+  "https://my.moneyfusion.net/69458ef3e075f7af6c0d6cd5";
+
 export default async function ScholarshipPage({
   params,
   searchParams,
@@ -31,8 +34,7 @@ export default async function ScholarshipPage({
     notFound();
   }
 
-  const scholarship = loadedScholarship!;
-
+  const scholarship = loadedScholarship;
   const success = firstQueryValue(messages.success);
   const error = firstQueryValue(messages.error);
   const status = getScholarshipStatusMeta(scholarship.status);
@@ -64,7 +66,7 @@ export default async function ScholarshipPage({
 
               <div className="action-row">
                 <Link href="#formulaire-candidature" className="button button--primary">
-                  Postuler maintenant
+                  Commencer la candidature
                 </Link>
                 <Link href="/#catalogue" className="button button--secondary">
                   Retour au catalogue
@@ -135,64 +137,76 @@ export default async function ScholarshipPage({
                     ))}
                   </ul>
                   <p className="muted">
-                    Des pièces complémentaires académiques peuvent être demandées
-                    par l&apos;établissement après une présélection.
+                    Des pièces complémentaires académiques peuvent être demandées par
+                    l&apos;établissement après une présélection.
                   </p>
                 </div>
 
-                {scholarship.officialUrl ? (
-                  <div className="panel">
-                    <div>
-                      <span className="eyebrow">Source officielle</span>
-                      <h3 className="panel-title">{scholarship.officialSource}</h3>
-                    </div>
-                    <p className="muted">
-                      Fiche éditoriale vérifiée le {scholarship.verifiedAt ?? "19/03/2026"} à
-                      partir de la publication institutionnelle.
-                    </p>
-                    <a
-                      href={scholarship.officialUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="button button--secondary"
-                    >
-                      Ouvrir la source officielle
-                    </a>
+                <div className="panel">
+                  <div>
+                    <span className="eyebrow">Source officielle</span>
+                    <h3 className="panel-title">{scholarship.officialSource}</h3>
                   </div>
-                ) : null}
+                  <p className="muted">
+                    Fiche éditoriale vérifiée le {scholarship.verifiedAt ?? "19/03/2026"} à
+                    partir de la publication institutionnelle.
+                  </p>
+                  <a
+                    href={scholarship.officialUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="button button--secondary"
+                  >
+                    Ouvrir la source officielle
+                  </a>
+                </div>
 
                 <div className="panel">
                   <div>
                     <span className="eyebrow">Circuit de traitement</span>
                     <h3 className="panel-title">Comment votre dossier est traité</h3>
                   </div>
+
                   <div className="timeline-item">
                     <span className="step-index">1</span>
                     <div className="timeline-item__body">
-                      <strong>Dépôt sur Vision France</strong>
+                      <strong>Paiement des frais d&apos;étude</strong>
                       <span className="muted">
-                        Transmission du formulaire et des justificatifs sur la
-                        plateforme.
+                        Le règlement des frais d&apos;étude de dossier s&apos;effectue avant
+                        toute soumission de candidature.
                       </span>
                     </div>
                   </div>
+
                   <div className="timeline-item">
                     <span className="step-index">2</span>
                     <div className="timeline-item__body">
-                      <strong>Instruction du dossier</strong>
+                      <strong>Dépôt sur Vision France</strong>
                       <span className="muted">
-                        Vérification des pièces, analyse du dossier et mise à jour
-                        du statut.
+                        Transmission du formulaire, de la référence de paiement et des
+                        justificatifs obligatoires sur la plateforme.
                       </span>
                     </div>
                   </div>
+
                   <div className="timeline-item">
                     <span className="step-index">3</span>
                     <div className="timeline-item__body">
+                      <strong>Instruction du dossier</strong>
+                      <span className="muted">
+                        Vérification des pièces, contrôle administratif et mise à jour
+                        du statut de candidature.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="timeline-item">
+                    <span className="step-index">4</span>
+                    <div className="timeline-item__body">
                       <strong>Transmission aux établissements</strong>
                       <span className="muted">
-                        L&apos;université ou l&apos;école est notifiée pour la suite du
-                        processus académique.
+                        L&apos;université ou l&apos;école est notifiée pour poursuivre le
+                        processus académique avec le candidat.
                       </span>
                     </div>
                   </div>
@@ -203,10 +217,11 @@ export default async function ScholarshipPage({
             <aside className="detail-side" id="formulaire-candidature">
               <section className="detail-side__card">
                 <span className="eyebrow">Candidature</span>
-                <h2 className="panel-title">Déposer votre dossier</h2>
+                <h2 className="panel-title">Déposer votre dossier en 2 étapes</h2>
                 <p className="muted">
-                  Le formulaire ci-dessous enregistre votre candidature et
-                  déclenche un email de confirmation.
+                  Étape 1 : procéder au paiement des frais d&apos;étude de dossier.
+                  Étape 2 : soumettre le formulaire complet avec la référence de
+                  paiement et les documents justificatifs.
                 </p>
               </section>
 
@@ -220,6 +235,61 @@ export default async function ScholarshipPage({
 
                 <form action={submitApplication} className="application-form">
                   <input type="hidden" name="scholarshipSlug" value={scholarship.slug} />
+
+                  <section className="application-step">
+                    <div className="application-step__header">
+                      <span className="step-index">1</span>
+                      <div>
+                        <h3 className="panel-title">Payer l&apos;étude de dossier</h3>
+                        <p className="muted">
+                          Le paiement s&apos;ouvre dans un nouvel onglet via MoneyFusion.
+                          Après le règlement, revenez sur cette page pour renseigner la
+                          référence de paiement.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="application-step__actions">
+                      <a
+                        href={applicationFeePaymentUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="button button--accent"
+                      >
+                        Procéder au paiement
+                      </a>
+                      <span className="payment-note">
+                        Lien de paiement de démonstration pour l&apos;étude de dossier.
+                      </span>
+                    </div>
+                  </section>
+
+                  <section className="application-step">
+                    <div className="application-step__header">
+                      <span className="step-index">2</span>
+                      <div>
+                        <h3 className="panel-title">Soumettre le dossier</h3>
+                        <p className="muted">
+                          Le dossier n&apos;est enregistré qu&apos;après confirmation du
+                          paiement et contrôle des deux justificatifs obligatoires.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+
+                  <div className="field">
+                    <label htmlFor="paymentReference">Référence de paiement</label>
+                    <input
+                      id="paymentReference"
+                      name="paymentReference"
+                      placeholder="Ex. MF-2026-001234"
+                      required
+                    />
+                    <small>
+                      Renseignez la référence affichée après le paiement afin de
+                      finaliser l&apos;étude de votre dossier.
+                    </small>
+                  </div>
 
                   <div className="forms-grid">
                     <div className="field">
@@ -352,6 +422,7 @@ export default async function ScholarshipPage({
                       />
                     </div>
                   </div>
+
                   <div className="field">
                     <small>
                       Formats acceptés : PDF, JPG, PNG pour les deux justificatifs
@@ -360,16 +431,24 @@ export default async function ScholarshipPage({
                   </div>
 
                   <label className="consent">
+                    <input type="checkbox" name="paymentConfirmed" value="yes" />
+                    <span>
+                      Je confirme avoir effectué le paiement des frais d&apos;étude de
+                      dossier via le lien de paiement Vision France.
+                    </span>
+                  </label>
+
+                  <label className="consent">
                     <input type="checkbox" name="consent" value="yes" />
                     <span>
                       Je certifie l&apos;exactitude des informations transmises et
-                      j&apos;autorise Vision France à traiter mon dossier pour les
-                      besoins de la procédure.
+                      j&apos;autorise Vision France à traiter mon dossier pour les besoins
+                      de la procédure.
                     </span>
                   </label>
 
                   <button className="button button--accent button--block" type="submit">
-                    Envoyer ma candidature
+                    Soumettre ma candidature
                   </button>
                 </form>
               </section>

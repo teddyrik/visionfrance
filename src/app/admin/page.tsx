@@ -299,6 +299,12 @@ export default async function AdminDashboard({
                         <strong>Email</strong>
                         {application.applicant.email}
                       </span>
+                      {application.applicant.paymentReference ? (
+                        <span>
+                          <strong>Ref. paiement</strong>
+                          {application.applicant.paymentReference}
+                        </span>
+                      ) : null}
                       <span>
                         <strong>Pays</strong>
                         {application.applicant.country}

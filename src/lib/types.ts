@@ -65,6 +65,7 @@ export type Application = {
     lastName: string;
     email: string;
     phone: string;
+    paymentReference?: string;
     country: string;
     birthDate: string;
     currentLevel: string;
@@ -116,6 +117,7 @@ export type NewApplicationInput = {
   lastName: string;
   email: string;
   phone: string;
+  paymentReference: string;
   country: string;
   birthDate: string;
   currentLevel: string;

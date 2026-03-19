@@ -21,6 +21,7 @@ export async function submitApplication(formData: FormData) {
 
   const phoneCountryCode = readString(formData.get("phoneCountryCode"));
   const phoneNumber = readString(formData.get("phoneNumber"));
+  const paymentReference = readString(formData.get("paymentReference"));
 
   const payload = {
     scholarshipSlug,
@@ -28,6 +29,7 @@ export async function submitApplication(formData: FormData) {
     lastName: readString(formData.get("lastName")),
     email: readString(formData.get("email")),
     phone: [phoneCountryCode, phoneNumber].filter(Boolean).join(" "),
+    paymentReference,
     country: readString(formData.get("country")),
     birthDate: readString(formData.get("birthDate")),
     currentLevel: readString(formData.get("currentLevel")),
@@ -41,6 +43,7 @@ export async function submitApplication(formData: FormData) {
     payload.firstName,
     payload.lastName,
     payload.email,
+    payload.paymentReference,
     phoneCountryCode,
     phoneNumber,
     payload.country,
@@ -55,6 +58,14 @@ export async function submitApplication(formData: FormData) {
     redirect(
       `/bourses/${scholarship.slug}?error=${encodeURIComponent(
         "Merci de renseigner tous les champs obligatoires du dossier.",
+      )}#formulaire-candidature`,
+    );
+  }
+
+  if (!formData.has("paymentConfirmed")) {
+    redirect(
+      `/bourses/${scholarship.slug}?error=${encodeURIComponent(
+        "Merci d'effectuer le paiement des frais d'etude de dossier puis de confirmer cette etape.",
       )}#formulaire-candidature`,
     );
   }
