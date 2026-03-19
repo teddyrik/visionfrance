@@ -27,7 +27,7 @@ export default async function ScholarshipPage({
   const messages = await searchParams;
   const loadedScholarship = await getScholarshipBySlug(slug);
 
-  if (!loadedScholarship) {
+  if (!loadedScholarship || !loadedScholarship.officialUrl) {
     notFound();
   }
 
