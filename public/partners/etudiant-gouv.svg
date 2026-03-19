@@ -1,0 +1,11 @@
+<svg width="420" height="120" viewBox="0 0 420 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="420" height="120" rx="20" fill="white"/>
+  <circle cx="56" cy="60" r="32" fill="#D71424"/>
+  <path d="M58.77 43.65C49.73 43.65 42.4 50.98 42.4 60.02C42.4 69.06 49.73 76.39 58.77 76.39C64.44 76.39 69.45 73.5 72.39 69.11H61.47C59.61 70.36 57.37 71.09 54.95 71.09C48.51 71.09 43.29 65.88 43.29 59.43C43.29 52.99 48.51 47.78 54.95 47.78C57.37 47.78 59.61 48.5 61.47 49.76H72.39C69.45 45.36 64.44 42.48 58.77 42.48V43.65Z" fill="white"/>
+  <text x="106" y="54" fill="#0D2F6F" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700">
+    Les Crous
+  </text>
+  <text x="106" y="82" fill="#4F6282" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="600">
+    etudiant.gouv.fr
+  </text>
+</svg>

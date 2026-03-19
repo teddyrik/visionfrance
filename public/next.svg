@@ -1,0 +1,20 @@
+<svg width="360" height="96" viewBox="0 0 360 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="360" height="96" rx="24" fill="#F4F7FD"/>
+  <rect x="24" y="18" width="60" height="60" rx="18" fill="white" stroke="#0D2F6F" stroke-width="3"/>
+  <path d="M34 31C40 24 50 20 60 20C70 20 80 24 86 31V46C86 62 74 74 60 74C46 74 34 62 34 46V31Z" fill="white"/>
+  <path d="M34 31C40 24 50 20 60 20V74C46 74 34 62 34 46V31Z" fill="#0D2F6F"/>
+  <path d="M86 31C80 24 70 20 60 20V74C74 74 86 62 86 46V31Z" fill="#D71424"/>
+  <path d="M45 52L60 44L75 52L60 60L45 52Z" fill="#051635"/>
+  <path d="M117 40H197" stroke="#0D2F6F" stroke-width="8" stroke-linecap="round"/>
+  <path d="M214 40H336" stroke="#D71424" stroke-width="8" stroke-linecap="round"/>
+  <path d="M118 59H336" stroke="#7A8DAF" stroke-width="6" stroke-linecap="round"/>
+  <text x="117" y="35" fill="#0D2F6F" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="3">
+    PLATEFORME OFFICIELLE
+  </text>
+  <text x="117" y="61" fill="#0D2F6F" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">
+    Vision
+  </text>
+  <text x="214" y="61" fill="#D71424" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="700">
+    France
+  </text>
+</svg>
