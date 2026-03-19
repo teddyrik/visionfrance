@@ -6,11 +6,11 @@ export function SiteFooter() {
       <div className="footer__inner">
         <p>
           Vision France centralise les candidatures, notifie les candidats et
-          relaie les dossiers aux etablissements partenaires.
+          relaie les dossiers aux établissements partenaires.
         </p>
         <div className="footer__meta">
           <Link href="/#catalogue">Catalogue</Link>
-          <Link href="/#processus">Procedure</Link>
+          <Link href="/#processus">Procédure</Link>
           <Link href="/#suivi">Suivi</Link>
         </div>
       </div>

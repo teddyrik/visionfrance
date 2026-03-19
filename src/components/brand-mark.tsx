@@ -48,7 +48,7 @@ function Content({ accent = "dark" }: Pick<BrandMarkProps, "accent">) {
       </div>
       <div>
         <p className="brand-mark__title">Vision France</p>
-        <p className="brand-mark__subtitle">Plateforme des bourses d'etudes</p>
+        <p className="brand-mark__subtitle">Plateforme des bourses d'études</p>
       </div>
     </div>
   );

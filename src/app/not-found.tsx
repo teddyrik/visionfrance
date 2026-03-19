@@ -5,10 +5,10 @@ export default function NotFound() {
     <main className="not-found">
       <section className="not-found__card panel">
         <span className="eyebrow">Page introuvable</span>
-        <h1 className="detail-title">Cette fiche n&apos;existe pas ou n&apos;est plus publiee.</h1>
+        <h1 className="detail-title">Cette fiche n&apos;existe pas ou n&apos;est plus publiée.</h1>
         <p className="muted">
           Retournez au catalogue principal pour consulter les bourses ouvertes
-          et deposer votre candidature.
+          et déposer votre candidature.
         </p>
         <Link href="/" className="button button--primary">
           Revenir au catalogue

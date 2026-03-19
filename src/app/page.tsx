@@ -9,12 +9,12 @@ export const dynamic = "force-dynamic";
 
 const partners = [
   {
-    name: "Institut francais",
+    name: "Institut français",
     website: "https://www.institutfrancais.com/fr",
     logo: "/partners/institut-francais.svg",
   },
   {
-    name: "Fondation Alliance Francaise",
+    name: "Fondation Alliance Française",
     website: "https://www.fondation-alliancefr.org/",
     logo: "/partners/fondation-alliance-francaise.svg",
   },
@@ -29,7 +29,7 @@ const partners = [
     logo: "/partners/atout-france.svg",
   },
   {
-    name: "Etudiant.gouv.fr",
+    name: "Étudiant.gouv.fr",
     website: "https://www.etudiant.gouv.fr/fr",
     logo: "/partners/etudiant-gouv.svg",
   },
@@ -42,6 +42,11 @@ type HomePageProps = {
 export default async function Home({ searchParams }: HomePageProps) {
   const filters = await searchParams;
   const scholarships = await getScholarships();
+  const verifiedDate = new Intl.DateTimeFormat("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
 
   const query = firstQueryValue(filters.q)?.toLowerCase() ?? "";
   const level = firstQueryValue(filters.level) ?? "";
@@ -66,10 +71,10 @@ export default async function Home({ searchParams }: HomePageProps) {
   });
 
   const stats = {
-    countries: 86,
-    institutions: 42,
+    institutions: new Set(scholarships.map((item) => item.institution)).size,
     openScholarships: scholarships.filter((item) => item.status !== "closed").length,
-    applications: 1200,
+    officialSources: scholarships.filter((item) => item.officialUrl).length,
+    featured: scholarships.filter((item) => item.featured).length,
   };
 
   return (
@@ -83,14 +88,14 @@ export default async function Home({ searchParams }: HomePageProps) {
                 <div className="hero__content">
                   <span className="eyebrow">Canal officiel Vision France</span>
                   <h1 className="display-title">
-                    Les bourses d&apos;etudes en France, instruites sur une seule
+                    Les bourses d&apos;études en France, instruites sur une seule
                     plateforme.
                   </h1>
                   <p className="hero-copy">
                     Vision France liste les dispositifs de financement,
                     centralise les dossiers internationaux, informe les
                     candidats par email et transmet les candidatures aux
-                    etablissements pour la suite des procedures.
+                    établissements pour la suite des procédures.
                   </p>
                   <div className="hero__actions">
                     <Link href="/#catalogue" className="button button--primary">
@@ -107,18 +112,18 @@ export default async function Home({ searchParams }: HomePageProps) {
                       <div>
                         <h2 className="panel-title">Catalogue public</h2>
                         <p className="muted">
-                          Fiches bourses detaillees, criteres d&apos;eligibilite,
-                          documents attendus et deadlines.
+                          Fiches bourses détaillées, critères d&apos;éligibilité,
+                          source officielle et échéance claire.
                         </p>
                       </div>
                     </article>
                     <article className="feature-card">
                       <span className="feature-card__icon">02</span>
                       <div>
-                        <h2 className="panel-title">Dossiers centralises</h2>
+                        <h2 className="panel-title">Dossier centralisé</h2>
                         <p className="muted">
-                          Formulaire unique de candidature avec depot du dossier
-                          et historique de traitement.
+                          Formulaire unique pour le dépôt initial du dossier et
+                          traçabilité de chaque étape.
                         </p>
                       </div>
                     </article>
@@ -127,8 +132,8 @@ export default async function Home({ searchParams }: HomePageProps) {
                       <div>
                         <h2 className="panel-title">Notifications automatiques</h2>
                         <p className="muted">
-                          Emails envoyes au candidat a chaque evolution de statut
-                          et aux etablissements lors des transmissions.
+                          Emails envoyés au candidat à chaque évolution de
+                          statut et aux établissements lors des transmissions.
                         </p>
                       </div>
                     </article>
@@ -137,11 +142,12 @@ export default async function Home({ searchParams }: HomePageProps) {
 
                 <div className="hero__stats">
                   <article className="hero-highlight__card">
-                    <span className="mini-label">Suivi central</span>
-                    <strong>Instruction, notifications et relais vers les ecoles</strong>
+                    <span className="mini-label">Catalogue actualisé</span>
+                    <strong>Fiches vérifiées à partir des publications officielles</strong>
                     <p>
-                      Une lecture claire du parcours candidat, depuis le depot
-                      jusqu&apos;a la transmission aux etablissements partenaires.
+                      Mise à jour éditoriale du catalogue le {verifiedDate}, avec
+                      liens directs vers les appels institutionnels et les pages
+                      de référence.
                     </p>
                   </article>
 
@@ -150,28 +156,28 @@ export default async function Home({ searchParams }: HomePageProps) {
                       <span>1</span>
                       <div>
                         <strong>{stats.openScholarships} appels actifs</strong>
-                        <p className="muted">ouverts ou en cloture proche</p>
+                        <p className="muted">ouverts, en clôture proche ou à venir</p>
                       </div>
                     </div>
                     <div className="hero-highlight__line">
                       <span>2</span>
                       <div>
-                        <strong>{stats.institutions} etablissements informes</strong>
-                        <p className="muted">universites, ecoles, laboratoires</p>
+                        <strong>{stats.institutions} établissements couverts</strong>
+                        <p className="muted">universités, écoles et programmes gradués</p>
                       </div>
                     </div>
                     <div className="hero-highlight__line">
                       <span>3</span>
                       <div>
-                        <strong>{stats.countries} pays cibles</strong>
-                        <p className="muted">visibilite internationale et procedure unifiee</p>
+                        <strong>{stats.officialSources} sources officielles</strong>
+                        <p className="muted">liens institutionnels rattachés à chaque fiche</p>
                       </div>
                     </div>
                     <div className="hero-highlight__line">
                       <span>4</span>
                       <div>
-                        <strong>{stats.applications}+ dossiers</strong>
-                        <p className="muted">capacite projetee pour la campagne 2026</p>
+                        <strong>{stats.featured} programmes à la une</strong>
+                        <p className="muted">sélection éditoriale des dispositifs structurants</p>
                       </div>
                     </div>
                   </div>
@@ -189,9 +195,9 @@ export default async function Home({ searchParams }: HomePageProps) {
                 <h2 className="section-title">Les organismes qui accompagnent Vision France</h2>
               </div>
               <p className="section-copy">
-                Des acteurs publics et institutionnels engages pour la visibilite
+                Des acteurs publics et institutionnels engagés pour la visibilité
                 des bourses, l&apos;orientation et la coordination des parcours
-                etudiants.
+                étudiants.
               </p>
             </div>
 
@@ -227,14 +233,19 @@ export default async function Home({ searchParams }: HomePageProps) {
               <div>
                 <span className="eyebrow">Catalogue public</span>
                 <h2 className="section-title">
-                  Toutes les bourses accessibles aux candidats internationaux
+                  Bourses actuellement publiées pour les candidates et candidats internationaux
                 </h2>
               </div>
               <p className="section-copy">
-                Une presentation editoriale inspiree des codes Campus France :
-                contenu institutionnel, cartes nettes, palette tricolore et
-                parcours de candidature direct.
+                Un catalogue éditorial structuré, lisible et professionnel, avec
+                source officielle, échéance claire et parcours de candidature
+                centralisé.
               </p>
+            </div>
+
+            <div className="notice notice--success">
+              Catalogue vérifié le {verifiedDate} à partir des sites officiels
+              des universités, écoles et organismes porteurs.
             </div>
 
             <form className="catalogue-filter" method="GET">
@@ -253,18 +264,20 @@ export default async function Home({ searchParams }: HomePageProps) {
                   <label htmlFor="level">Niveau</label>
                   <select id="level" name="level" defaultValue={level}>
                     <option value="">Tous les niveaux</option>
+                    <option value="Bachelor">Bachelor</option>
                     <option value="Licence">Licence</option>
                     <option value="Master">Master</option>
                     <option value="Doctorat">Doctorat</option>
                   </select>
                 </div>
                 <div className="field">
-                  <label htmlFor="status">Disponibilite</label>
+                  <label htmlFor="status">Disponibilité</label>
                   <select id="status" name="status" defaultValue={status}>
                     <option value="">Tous les statuts</option>
                     <option value="open">Ouverte</option>
-                    <option value="closing">Cloture proche</option>
-                    <option value="closed">Cloturee</option>
+                    <option value="closing">Clôture proche</option>
+                    <option value="upcoming">À venir</option>
+                    <option value="closed">Clôturée</option>
                   </select>
                 </div>
                 <div className="field">
@@ -296,14 +309,14 @@ export default async function Home({ searchParams }: HomePageProps) {
               <div>
                 <span className="eyebrow">Processus candidat</span>
                 <h2 className="section-title">
-                  Un circuit lisible du depot jusqu&apos;a la decision finale
+                  Un circuit lisible du dépôt jusqu&apos;à la décision finale
                 </h2>
               </div>
             </div>
             <div className="impact-grid">
               <article className="impact-card">
                 <span className="impact-card__icon">A</span>
-                <h3 className="panel-title">1. Depot du dossier</h3>
+                <h3 className="panel-title">1. Dépôt du dossier</h3>
                 <p className="muted">
                   Le candidat choisit une bourse, ouvre le formulaire avec le
                   bouton Postuler et transmet son dossier complet.
@@ -313,16 +326,16 @@ export default async function Home({ searchParams }: HomePageProps) {
                 <span className="impact-card__icon">B</span>
                 <h3 className="panel-title">2. Instruction Vision France</h3>
                 <p className="muted">
-                  Les equipes Vision France controlent les pieces, qualifient le
-                  statut et gardent une trace horodatee de chaque action.
+                  Les équipes Vision France contrôlent les pièces, qualifient le
+                  statut et gardent une trace horodatée de chaque action.
                 </p>
               </article>
               <article className="impact-card">
                 <span className="impact-card__icon">C</span>
-                <h3 className="panel-title">3. Relais vers les etablissements</h3>
+                <h3 className="panel-title">3. Relais vers les établissements</h3>
                 <p className="muted">
                   Lorsque le dossier est mature, la plateforme alerte
-                  l&apos;universite ou l&apos;ecole afin qu&apos;elle poursuive la procedure.
+                  l&apos;université ou l&apos;école afin qu&apos;elle poursuive la procédure.
                 </p>
               </article>
             </div>
@@ -342,24 +355,24 @@ export default async function Home({ searchParams }: HomePageProps) {
                 <span className="impact-card__icon">M</span>
                 <h3 className="panel-title">Mails automatiques</h3>
                 <p className="muted">
-                  Confirmation de depot, passage en instruction, transmission
-                  aux etablissements et decision finale.
+                  Confirmation de dépôt, passage en instruction, transmission
+                  aux établissements et décision finale.
                 </p>
               </article>
               <article className="impact-card">
                 <span className="impact-card__icon">S</span>
                 <h3 className="panel-title">Statuts visibles</h3>
                 <p className="muted">
-                  Chaque dossier suit un chemin lisible : recu, en instruction,
-                  preselection, transmission ou decision finale.
+                  Chaque dossier suit un chemin lisible : reçu, en instruction,
+                  présélection, transmission ou décision finale.
                 </p>
               </article>
               <article className="impact-card">
                 <span className="impact-card__icon">E</span>
-                <h3 className="panel-title">Etablissements informes</h3>
+                <h3 className="panel-title">Établissements informés</h3>
                 <p className="muted">
-                  Les ecoles et universites partenaires recoivent les dossiers
-                  a l&apos;etape prevue pour poursuivre la procedure.
+                  Les écoles et universités partenaires reçoivent les dossiers à
+                  l&apos;étape prévue pour poursuivre la procédure.
                 </p>
               </article>
             </div>

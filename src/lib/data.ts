@@ -18,6 +18,10 @@ import type {
   ScholarshipStatus,
 } from "@/lib/types";
 
+type DocumentDescriptor =
+  | Awaited<ReturnType<typeof localStore.getDocumentDescriptor>>
+  | Awaited<ReturnType<typeof getDocumentDescriptorSupabase>>;
+
 async function withFallback<T>(
   remoteOperation: () => Promise<T>,
   localOperation: () => Promise<T>,
@@ -34,18 +38,54 @@ async function withFallback<T>(
 }
 
 export async function getScholarships() {
-  return withFallback(getScholarshipsSupabase, localStore.getScholarships);
+  if (await isSupabaseReady()) {
+    try {
+      const remoteScholarships = await getScholarshipsSupabase();
+
+      if (remoteScholarships.length > 0) {
+        return remoteScholarships;
+      }
+    } catch (error) {
+      console.warn("[vision-france] Supabase indisponible, fallback local.", error);
+    }
+  }
+
+  return localStore.getScholarships();
 }
 
 export async function getScholarshipBySlug(slug: string) {
-  return withFallback(
-    () => getScholarshipBySlugSupabase(slug),
-    () => localStore.getScholarshipBySlug(slug),
-  );
+  if (await isSupabaseReady()) {
+    try {
+      const remoteScholarship = await getScholarshipBySlugSupabase(slug);
+
+      if (remoteScholarship) {
+        return remoteScholarship;
+      }
+    } catch (error) {
+      console.warn("[vision-france] Supabase indisponible, fallback local.", error);
+    }
+  }
+
+  return localStore.getScholarshipBySlug(slug);
 }
 
 export async function getDashboardData() {
-  return withFallback(getDashboardDataSupabase, localStore.getDashboardData);
+  if (await isSupabaseReady()) {
+    try {
+      const remoteDashboard = await getDashboardDataSupabase();
+
+      if (
+        remoteDashboard.scholarships.length > 0 ||
+        remoteDashboard.applications.length > 0
+      ) {
+        return remoteDashboard;
+      }
+    } catch (error) {
+      console.warn("[vision-france] Supabase indisponible, fallback local.", error);
+    }
+  }
+
+  return localStore.getDashboardData();
 }
 
 export async function createScholarship(input: NewScholarshipInput) {
@@ -88,7 +128,7 @@ export async function getDocumentDescriptor(
   applicationId: string,
   documentId: string,
 ) {
-  return withFallback(
+  return withFallback<DocumentDescriptor>(
     () => getDocumentDescriptorSupabase(applicationId, documentId),
     () => localStore.getDocumentDescriptor(applicationId, documentId),
   );
@@ -97,5 +137,14 @@ export async function getDocumentDescriptor(
 export { downloadStorageObjectSupabase };
 
 export async function getDataMode() {
-  return (await isSupabaseReady()) ? "supabase" : "local";
+  if (!(await isSupabaseReady())) {
+    return "local";
+  }
+
+  try {
+    const remoteScholarships = await getScholarshipsSupabase();
+    return remoteScholarships.length > 0 ? "supabase" : "local";
+  } catch {
+    return "local";
+  }
 }

@@ -17,12 +17,21 @@ import {
   createApplicationReference,
   createId,
   sanitizeFileName,
+  sortScholarshipsByPriority,
   slugify,
 } from "@/lib/utils";
 
 const STORAGE_DIR = path.join(process.cwd(), "storage");
 const STORE_PATH = path.join(STORAGE_DIR, "store.json");
 const UPLOADS_DIR = path.join(STORAGE_DIR, "uploads");
+const legacySeedScholarshipIds = new Set([
+  "sch_eiffel",
+  "sch_afrique",
+  "sch_green",
+  "sch_numeric",
+  "sch_mer",
+  "sch_health",
+]);
 
 let writeQueue: Promise<void> = Promise.resolve();
 
@@ -33,6 +42,73 @@ async function fileExists(target: string) {
   } catch {
     return false;
   }
+}
+
+function shouldRepairEncoding(value: string) {
+  return /Ã|Â|â€|â€™|â€œ|â€“|�/.test(value);
+}
+
+function repairString(value: string) {
+  if (!shouldRepairEncoding(value)) {
+    return value;
+  }
+
+  try {
+    const repaired = Buffer.from(value, "latin1").toString("utf8");
+    return repaired.includes("�") ? value : repaired;
+  } catch {
+    return value;
+  }
+}
+
+function repairEncodingDeep<T>(value: T): T {
+  if (typeof value === "string") {
+    return repairString(value) as T;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => repairEncodingDeep(item)) as T;
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, repairEncodingDeep(entry)]),
+    ) as T;
+  }
+
+  return value;
+}
+
+function mergeSeedScholarships(existingScholarships: Scholarship[]) {
+  const existingById = new Map(existingScholarships.map((item) => [item.id, item]));
+  const syncedSeed = seedScholarships.map((seed) => {
+    const existing = existingById.get(seed.id);
+
+    return existing
+      ? {
+          ...existing,
+          ...seed,
+          publishedAt: existing.publishedAt ?? seed.publishedAt,
+          updatedAt: seed.updatedAt,
+        }
+      : seed;
+  });
+  const extraScholarships = existingScholarships.filter(
+    (item) =>
+      !seedScholarships.some((seed) => seed.id === item.id) &&
+      !legacySeedScholarshipIds.has(item.id),
+  );
+
+  return [...syncedSeed, ...extraScholarships];
+}
+
+function normalizeStore(store: Store): Store {
+  const repaired = repairEncodingDeep(store);
+
+  return {
+    scholarships: mergeSeedScholarships(repaired.scholarships ?? []),
+    applications: repaired.applications ?? [],
+  };
 }
 
 async function ensureStore() {
@@ -46,6 +122,15 @@ async function ensureStore() {
     };
 
     await writeFile(STORE_PATH, JSON.stringify(initialStore, null, 2), "utf8");
+    return;
+  }
+
+  const rawStore = await readFile(STORE_PATH, "utf8");
+  const parsedStore = JSON.parse(rawStore) as Store;
+  const normalizedStore = normalizeStore(parsedStore);
+
+  if (JSON.stringify(parsedStore) !== JSON.stringify(normalizedStore)) {
+    await writeFile(STORE_PATH, JSON.stringify(normalizedStore, null, 2), "utf8");
   }
 }
 
@@ -76,13 +161,7 @@ async function updateStore<T>(updater: (store: Store) => Promise<T> | T) {
 }
 
 function sortScholarships(items: Scholarship[]) {
-  return [...items].sort((left, right) => {
-    if (left.featured !== right.featured) {
-      return left.featured ? -1 : 1;
-    }
-
-    return new Date(left.deadline).getTime() - new Date(right.deadline).getTime();
-  });
+  return sortScholarshipsByPriority(items);
 }
 
 function sortApplications(items: Application[]) {
@@ -173,6 +252,7 @@ export async function createScholarship(input: NewScholarshipInput) {
       institution: input.institution,
       level: input.level,
       deadline: input.deadline,
+      deadlineLabel: input.deadlineLabel,
       location: input.location,
       coverage: input.coverage,
       summary: input.summary,
@@ -187,6 +267,9 @@ export async function createScholarship(input: NewScholarshipInput) {
       institutionEmail: input.institutionEmail,
       featured: input.featured,
       status: input.status,
+      officialSource: input.officialSource,
+      officialUrl: input.officialUrl,
+      verifiedAt: input.verifiedAt ?? new Date().toISOString().slice(0, 10),
       publishedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -226,7 +309,7 @@ export async function saveApplication(input: NewApplicationInput, files: File[])
     const statusHistory = [
       createHistoryEntry(
         "received",
-        "Dossier depose par le candidat sur la plateforme Vision France.",
+        "Dossier déposé par le candidat sur la plateforme Vision France.",
         "Plateforme Vision France",
       ),
     ];
@@ -281,7 +364,7 @@ export async function updateApplicationStatus(
     application.statusHistory.unshift(
       createHistoryEntry(
         status,
-        note || "Statut mis a jour par l'administration Vision France.",
+        note || "Statut mis à jour par l'administration Vision France.",
         changedBy,
       ),
     );

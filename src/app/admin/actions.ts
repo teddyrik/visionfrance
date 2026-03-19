@@ -31,7 +31,7 @@ export async function loginAction(formData: FormData) {
   if (!validateAdminCredentials(email, password)) {
     redirect(
       `/admin/login?error=${encodeURIComponent(
-        "Identifiants invalides. Verifiez la configuration admin.",
+        "Identifiants invalides. Vérifiez la configuration admin.",
       )}`,
     );
   }
@@ -52,6 +52,7 @@ export async function createScholarshipAction(formData: FormData) {
   const institution = readString(formData.get("institution"));
   const level = readString(formData.get("level"));
   const deadline = readString(formData.get("deadline"));
+  const deadlineLabel = readString(formData.get("deadlineLabel"));
   const location = readString(formData.get("location"));
   const coverage = readString(formData.get("coverage"));
   const summary = readString(formData.get("summary"));
@@ -60,6 +61,8 @@ export async function createScholarshipAction(formData: FormData) {
   const language = readString(formData.get("language"));
   const audience = readString(formData.get("audience"));
   const institutionEmail = readString(formData.get("institutionEmail"));
+  const officialSource = readString(formData.get("officialSource"));
+  const officialUrl = readString(formData.get("officialUrl"));
   const status = readString(formData.get("status")) as ScholarshipStatus;
   const seats = Number.parseInt(readString(formData.get("seats")), 10);
 
@@ -78,7 +81,7 @@ export async function createScholarshipAction(formData: FormData) {
     !institutionEmail ||
     Number.isNaN(seats)
   ) {
-    redirect(adminNotice("error", "Tous les champs de creation de bourse sont requis."));
+    redirect(adminNotice("error", "Tous les champs de création de bourse sont requis."));
   }
 
   await createScholarship({
@@ -86,6 +89,7 @@ export async function createScholarshipAction(formData: FormData) {
     institution,
     level,
     deadline,
+    deadlineLabel,
     location,
     coverage,
     summary,
@@ -100,12 +104,15 @@ export async function createScholarshipAction(formData: FormData) {
     institutionEmail,
     featured: formData.has("featured"),
     status,
+    officialSource,
+    officialUrl,
+    verifiedAt: new Date().toISOString().slice(0, 10),
   });
 
   revalidatePath("/");
   revalidatePath("/admin");
 
-  redirect(adminNotice("notice", "La bourse a ete publiee."));
+  redirect(adminNotice("notice", "La bourse a été publiée."));
 }
 
 export async function updateScholarshipStatusAction(formData: FormData) {
@@ -115,7 +122,7 @@ export async function updateScholarshipStatusAction(formData: FormData) {
   const status = readString(formData.get("status")) as ScholarshipStatus;
 
   if (!scholarshipId || !status) {
-    redirect(adminNotice("error", "Impossible de mettre a jour cette bourse."));
+    redirect(adminNotice("error", "Impossible de mettre à jour cette bourse."));
   }
 
   await updateScholarshipStatus(scholarshipId, status);
@@ -123,7 +130,7 @@ export async function updateScholarshipStatusAction(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/admin");
 
-  redirect(adminNotice("notice", "Le statut de la bourse a ete mis a jour."));
+  redirect(adminNotice("notice", "Le statut de la bourse a été mis à jour."));
 }
 
 export async function updateApplicationStatusAction(formData: FormData) {
@@ -133,7 +140,7 @@ export async function updateApplicationStatusAction(formData: FormData) {
   const note = readString(formData.get("note"));
 
   if (!applicationId || !status) {
-    redirect(adminNotice("error", "Impossible de mettre a jour la candidature."));
+    redirect(adminNotice("error", "Impossible de mettre à jour la candidature."));
   }
 
   const { application, scholarship } = await updateApplicationStatus(
@@ -157,5 +164,5 @@ export async function updateApplicationStatusAction(formData: FormData) {
     void Promise.allSettled(tasks);
   }
 
-  redirect(adminNotice("notice", "La candidature a ete mise a jour."));
+  redirect(adminNotice("notice", "La candidature a été mise à jour."));
 }

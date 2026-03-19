@@ -1,5 +1,9 @@
 import { randomUUID } from "node:crypto";
-import type { ApplicationStatus, ScholarshipStatus } from "@/lib/types";
+import type {
+  ApplicationStatus,
+  Scholarship,
+  ScholarshipStatus,
+} from "@/lib/types";
 
 export function formatDate(dateString: string) {
   return new Intl.DateTimeFormat("fr-FR", {
@@ -18,6 +22,13 @@ export function formatDateTime(dateString: string) {
     minute: "2-digit",
   }).format(new Date(dateString));
 }
+
+const scholarshipStatusPriority: Record<ScholarshipStatus, number> = {
+  closing: 0,
+  open: 1,
+  upcoming: 2,
+  closed: 3,
+};
 
 export function slugify(value: string) {
   return value
@@ -57,14 +68,41 @@ export function formatBytes(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
 }
 
+export function formatSeats(value: number) {
+  return value > 0 ? new Intl.NumberFormat("fr-FR").format(value) : "Non communiqué";
+}
+
+export function formatScholarshipDeadline(scholarship: Scholarship) {
+  return scholarship.deadlineLabel || formatDate(scholarship.deadline);
+}
+
+export function sortScholarshipsByPriority(items: Scholarship[]) {
+  return [...items].sort((left, right) => {
+    const statusGap =
+      scholarshipStatusPriority[left.status] - scholarshipStatusPriority[right.status];
+
+    if (statusGap !== 0) {
+      return statusGap;
+    }
+
+    if (left.featured !== right.featured) {
+      return left.featured ? -1 : 1;
+    }
+
+    return new Date(left.deadline).getTime() - new Date(right.deadline).getTime();
+  });
+}
+
 export function getScholarshipStatusMeta(status: ScholarshipStatus) {
   switch (status) {
     case "open":
       return { label: "Ouverte", tone: "blue" as const };
     case "closing":
-      return { label: "Cloture proche", tone: "amber" as const };
+      return { label: "Clôture proche", tone: "amber" as const };
+    case "upcoming":
+      return { label: "À venir", tone: "green" as const };
     case "closed":
-      return { label: "Cloturee", tone: "slate" as const };
+      return { label: "Clôturée", tone: "slate" as const };
     default:
       return { label: status, tone: "slate" as const };
   }
@@ -73,15 +111,15 @@ export function getScholarshipStatusMeta(status: ScholarshipStatus) {
 export function getApplicationStatusMeta(status: ApplicationStatus) {
   switch (status) {
     case "received":
-      return { label: "Dossier recu", tone: "blue" as const };
+      return { label: "Dossier reçu", tone: "blue" as const };
     case "under_review":
       return { label: "En instruction", tone: "amber" as const };
     case "preselected":
-      return { label: "Preselection", tone: "green" as const };
+      return { label: "Présélection", tone: "green" as const };
     case "forwarded":
-      return { label: "Transmis a l'etablissement", tone: "blue" as const };
+      return { label: "Transmis à l'établissement", tone: "blue" as const };
     case "approved":
-      return { label: "Admission confirmee", tone: "green" as const };
+      return { label: "Admission confirmée", tone: "green" as const };
     case "rejected":
       return { label: "Non retenue", tone: "red" as const };
     default:

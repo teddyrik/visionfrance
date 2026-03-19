@@ -1,15 +1,15 @@
 # Vision France
 
-Plateforme Next.js pour publier les bourses d'etudes de la France, recevoir les candidatures internationales et piloter leur traitement.
+Plateforme Next.js pour publier les bourses d'études de la France, recevoir les candidatures internationales et piloter leur traitement.
 
 ## Ce qui est deja implemente
 
 - Interface publique avec hero editorial, catalogue des bourses, fiches detaillees et bouton `Postuler`
 - Depot de candidature avec pieces justificatives
 - Interface admin pour publier des bourses, suivre les candidatures et changer les statuts
-- Emails de confirmation et de suivi via Resend si `RESEND_API_KEY` est configure
+- Emails de confirmation et de suivi via Resend si `RESEND_API_KEY` est configuré
 - Adaptateur de donnees avec double mode :
-  - `Supabase` si l'instance est configuree et que le schema est disponible
+  - `Supabase` si l'instance est configurée et que le schéma est disponible
   - `fallback local` JSON + fichiers sur disque si Supabase n'est pas pret
 
 ## Configuration

@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/status-badge";
 import type { Scholarship } from "@/lib/types";
-import { formatDate, getScholarshipStatusMeta } from "@/lib/utils";
+import {
+  formatScholarshipDeadline,
+  getScholarshipStatusMeta,
+} from "@/lib/utils";
 
 type ScholarshipCardProps = {
   scholarship: Scholarship;
@@ -34,8 +37,8 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
           <span>{scholarship.level}</span>
         </div>
         <div>
-          <strong>Echeance</strong>
-          <span>{formatDate(scholarship.deadline)}</span>
+          <strong>Échéance</strong>
+          <span>{formatScholarshipDeadline(scholarship)}</span>
         </div>
         <div>
           <strong>Lieu</strong>
@@ -47,6 +50,23 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
         <li className="tag">{scholarship.coverage}</li>
         <li className="tag">{scholarship.language}</li>
       </ul>
+
+      {scholarship.officialUrl ? (
+        <div className="scholarship-card__source">
+          <span className="mini-label">
+            Source officielle
+            {scholarship.verifiedAt ? ` · vérifiée le ${scholarship.verifiedAt}` : ""}
+          </span>
+          <a
+            href={scholarship.officialUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-link"
+          >
+            {scholarship.officialSource ?? "Consulter la publication"}
+          </a>
+        </div>
+      ) : null}
 
       <div className="scholarship-card__footer">
         <Link href={`/bourses/${scholarship.slug}`} className="inline-link">

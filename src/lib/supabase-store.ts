@@ -12,6 +12,7 @@ import {
   createApplicationReference,
   createId,
   sanitizeFileName,
+  sortScholarshipsByPriority,
 } from "@/lib/utils";
 
 const SUPABASE_BUCKET =
@@ -50,7 +51,7 @@ function createHeaders(extra?: HeadersInit) {
   const config = getSupabaseConfig();
 
   if (!config) {
-    throw new Error("Supabase n'est pas configure.");
+    throw new Error("Supabase n'est pas configuré.");
   }
 
   return {
@@ -67,7 +68,7 @@ async function requestSupabase<T>(
   const config = getSupabaseConfig();
 
   if (!config) {
-    throw new Error("Supabase n'est pas configure.");
+    throw new Error("Supabase n'est pas configuré.");
   }
 
   const response = await fetch(`${config.url}${endpoint}`, {
@@ -94,6 +95,7 @@ type ScholarshipRow = {
   institution: string;
   level: string;
   deadline: string;
+  deadline_label?: string | null;
   location: string;
   coverage: string;
   summary: string;
@@ -108,6 +110,9 @@ type ScholarshipRow = {
   institution_email: string;
   featured: boolean;
   status: ScholarshipStatus;
+  official_source?: string | null;
+  official_url?: string | null;
+  verified_at?: string | null;
   published_at: string;
   updated_at: string;
 };
@@ -135,6 +140,7 @@ function mapScholarship(row: ScholarshipRow): Scholarship {
     institution: row.institution,
     level: row.level,
     deadline: row.deadline,
+    deadlineLabel: row.deadline_label ?? undefined,
     location: row.location,
     coverage: row.coverage,
     summary: row.summary,
@@ -149,6 +155,9 @@ function mapScholarship(row: ScholarshipRow): Scholarship {
     institutionEmail: row.institution_email,
     featured: row.featured,
     status: row.status,
+    officialSource: row.official_source ?? undefined,
+    officialUrl: row.official_url ?? undefined,
+    verifiedAt: row.verified_at ?? undefined,
     publishedAt: row.published_at,
     updatedAt: row.updated_at,
   };
@@ -248,7 +257,7 @@ export async function getScholarshipsSupabase() {
     "/rest/v1/scholarships?select=*&order=featured.desc,deadline.asc",
   );
 
-  return rows.map(mapScholarship);
+  return sortScholarshipsByPriority(rows.map(mapScholarship));
 }
 
 export async function getScholarshipBySlugSupabase(slug: string) {
@@ -304,6 +313,7 @@ export async function createScholarshipSupabase(input: NewScholarshipInput) {
         institution: input.institution,
         level: input.level,
         deadline: input.deadline,
+        deadline_label: input.deadlineLabel,
         location: input.location,
         coverage: input.coverage,
         summary: input.summary,
@@ -318,6 +328,9 @@ export async function createScholarshipSupabase(input: NewScholarshipInput) {
         institution_email: input.institutionEmail,
         featured: input.featured,
         status: input.status,
+        official_source: input.officialSource || null,
+        official_url: input.officialUrl || null,
+        verified_at: input.verifiedAt ?? new Date().toISOString().slice(0, 10),
       }),
     },
   );
@@ -363,7 +376,7 @@ export async function saveApplicationSupabase(
     {
       id: createId("hst"),
       status: "received" as const,
-      note: "Dossier depose par le candidat sur la plateforme Vision France.",
+      note: "Dossier déposé par le candidat sur la plateforme Vision France.",
       changedAt: new Date().toISOString(),
       changedBy: "Plateforme Vision France",
     },
@@ -429,7 +442,7 @@ export async function updateApplicationStatusSupabase(
   const historyEntry: ApplicationHistoryEntry = {
     id: createId("hst"),
     status,
-    note: note || "Statut mis a jour par l'administration Vision France.",
+    note: note || "Statut mis à jour par l'administration Vision France.",
     changedAt: new Date().toISOString(),
     changedBy,
   };
@@ -486,7 +499,7 @@ export async function downloadStorageObjectSupabase(storagePath: string) {
   const config = getSupabaseConfig();
 
   if (!config) {
-    throw new Error("Supabase n'est pas configure.");
+    throw new Error("Supabase n'est pas configuré.");
   }
 
   const response = await fetch(

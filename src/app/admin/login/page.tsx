@@ -26,10 +26,10 @@ export default async function AdminLoginPage({
           <BrandMark />
           <div>
             <span className="eyebrow">Administration</span>
-            <h1 className="detail-title">Acces au pilotage Vision France</h1>
+            <h1 className="detail-title">Accès au pilotage Vision France</h1>
             <p className="muted">
               Connexion simple pour l&apos;administration des bourses, le suivi des
-              candidatures et la transmission aux etablissements.
+              candidatures et la transmission aux établissements.
             </p>
           </div>
         </div>

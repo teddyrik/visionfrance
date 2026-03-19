@@ -218,6 +218,11 @@ svg {
   color: var(--ink);
 }
 
+.inline-link {
+  color: var(--ink);
+  font-weight: 800;
+}
+
 .brand-link {
   display: inline-flex;
   align-items: center;
@@ -690,6 +695,13 @@ svg {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+}
+
+.scholarship-card__source {
+  display: grid;
+  gap: 0.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px dashed rgba(13, 47, 111, 0.12);
 }
 
 .detail-shell {

@@ -1,4 +1,4 @@
-export type ScholarshipStatus = "open" | "closing" | "closed";
+export type ScholarshipStatus = "open" | "closing" | "upcoming" | "closed";
 
 export type ApplicationStatus =
   | "received"
@@ -15,6 +15,7 @@ export type Scholarship = {
   institution: string;
   level: string;
   deadline: string;
+  deadlineLabel?: string;
   location: string;
   coverage: string;
   summary: string;
@@ -29,6 +30,9 @@ export type Scholarship = {
   institutionEmail: string;
   featured: boolean;
   status: ScholarshipStatus;
+  officialSource?: string;
+  officialUrl?: string;
+  verifiedAt?: string;
   publishedAt: string;
   updatedAt: string;
 };
@@ -86,6 +90,7 @@ export type NewScholarshipInput = {
   institution: string;
   level: string;
   deadline: string;
+  deadlineLabel?: string;
   location: string;
   coverage: string;
   summary: string;
@@ -100,6 +105,9 @@ export type NewScholarshipInput = {
   institutionEmail: string;
   featured: boolean;
   status: ScholarshipStatus;
+  officialSource?: string;
+  officialUrl?: string;
+  verifiedAt?: string;
 };
 
 export type NewApplicationInput = {

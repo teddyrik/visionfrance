@@ -17,6 +17,7 @@ create table if not exists public.scholarships (
   institution text not null,
   level text not null,
   deadline date not null,
+  deadline_label text null,
   location text not null,
   coverage text not null,
   summary text not null,
@@ -30,10 +31,26 @@ create table if not exists public.scholarships (
   seats integer not null default 0,
   institution_email text not null,
   featured boolean not null default false,
-  status text not null default 'open' check (status in ('open', 'closing', 'closed')),
+  status text not null default 'open',
+  official_source text null,
+  official_url text null,
+  verified_at date null,
   published_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
 );
+
+alter table public.scholarships
+  add column if not exists deadline_label text null,
+  add column if not exists official_source text null,
+  add column if not exists official_url text null,
+  add column if not exists verified_at date null;
+
+alter table public.scholarships
+  drop constraint if exists scholarships_status_check;
+
+alter table public.scholarships
+  add constraint scholarships_status_check
+  check (status in ('open', 'closing', 'upcoming', 'closed'));
 
 create table if not exists public.applications (
   id text primary key,

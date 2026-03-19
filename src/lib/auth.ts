@@ -107,5 +107,5 @@ export async function requireAdmin() {
     redirect("/admin/login");
   }
 
-  return session;
+  return session!;
 }

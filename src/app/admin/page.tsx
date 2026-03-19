@@ -11,8 +11,9 @@ import { getDashboardData, getDataMode } from "@/lib/data";
 import {
   firstQueryValue,
   formatBytes,
-  formatDate,
   formatDateTime,
+  formatScholarshipDeadline,
+  formatSeats,
   getApplicationStatusMeta,
   getScholarshipStatusMeta,
 } from "@/lib/utils";
@@ -39,10 +40,10 @@ export default async function AdminDashboard({
         <div className="admin-topbar__inner">
           <BrandMark href="/" accent="light" />
           <div className="topbar__nav" style={{ color: "#fff" }}>
-            <span>Connecte : {session.email}</span>
+            <span>Connecté : {session.email}</span>
             <form action={logoutAction}>
               <button type="submit" className="button button--secondary">
-                Deconnexion
+                Déconnexion
               </button>
             </form>
           </div>
@@ -52,8 +53,8 @@ export default async function AdminDashboard({
       <section className="admin-shell">
         {dataMode === "local" ? (
           <div className="notice notice--error">
-            Supabase est configure mais le schema distant n&apos;est pas encore
-            disponible. Le fallback local est actif jusqu&apos;a execution de
+            Supabase est configuré mais le schéma distant n&apos;est pas encore
+            disponible. Le fallback local reste actif jusqu&apos;à l&apos;exécution de
             <code> supabase/schema.sql</code>.
           </div>
         ) : null}
@@ -89,7 +90,7 @@ export default async function AdminDashboard({
             <form action={createScholarshipAction} className="application-form">
               <div className="forms-grid">
                 <div className="field">
-                  <label htmlFor="title">Intitule</label>
+                  <label htmlFor="title">Intitulé</label>
                   <input id="title" name="title" required />
                 </div>
                 <div className="field">
@@ -105,6 +106,14 @@ export default async function AdminDashboard({
                   <input id="deadline" name="deadline" type="date" required />
                 </div>
                 <div className="field">
+                  <label htmlFor="deadlineLabel">Libellé d&apos;échéance</label>
+                  <input
+                    id="deadlineLabel"
+                    name="deadlineLabel"
+                    placeholder="Ex. 31 mars 2026 à 23 h 59"
+                  />
+                </div>
+                <div className="field">
                   <label htmlFor="location">Lieu</label>
                   <input id="location" name="location" required />
                 </div>
@@ -113,7 +122,7 @@ export default async function AdminDashboard({
                   <input id="coverage" name="coverage" required />
                 </div>
                 <div className="field">
-                  <label htmlFor="duration">Duree</label>
+                  <label htmlFor="duration">Durée</label>
                   <input id="duration" name="duration" required />
                 </div>
                 <div className="field">
@@ -126,32 +135,41 @@ export default async function AdminDashboard({
                 </div>
                 <div className="field">
                   <label htmlFor="seats">Places</label>
-                  <input id="seats" name="seats" type="number" min="1" required />
+                  <input id="seats" name="seats" type="number" min="0" required />
                 </div>
                 <div className="field">
-                  <label htmlFor="institutionEmail">Email etablissement</label>
+                  <label htmlFor="institutionEmail">Email établissement</label>
                   <input id="institutionEmail" name="institutionEmail" type="email" required />
+                </div>
+                <div className="field">
+                  <label htmlFor="officialSource">Source officielle</label>
+                  <input id="officialSource" name="officialSource" placeholder="Université, école..." />
+                </div>
+                <div className="field">
+                  <label htmlFor="officialUrl">Lien source officielle</label>
+                  <input id="officialUrl" name="officialUrl" type="url" placeholder="https://" />
                 </div>
                 <div className="field">
                   <label htmlFor="status">Statut initial</label>
                   <select id="status" name="status" defaultValue="open">
                     <option value="open">Ouverte</option>
-                    <option value="closing">Cloture proche</option>
-                    <option value="closed">Cloturee</option>
+                    <option value="closing">Clôture proche</option>
+                    <option value="upcoming">À venir</option>
+                    <option value="closed">Clôturée</option>
                   </select>
                 </div>
               </div>
 
               <div className="field">
-                <label htmlFor="summary">Resume</label>
+                <label htmlFor="summary">Résumé</label>
                 <textarea id="summary" name="summary" required />
               </div>
               <div className="field">
-                <label htmlFor="description">Description detaillee</label>
+                <label htmlFor="description">Description détaillée</label>
                 <textarea id="description" name="description" required />
               </div>
               <div className="field">
-                <label htmlFor="eligibility">Eligibilite</label>
+                <label htmlFor="eligibility">Éligibilité</label>
                 <textarea id="eligibility" name="eligibility" placeholder="Une condition par ligne" />
               </div>
               <div className="field">
@@ -193,12 +211,12 @@ export default async function AdminDashboard({
 
                     <div className="admin-item__meta">
                       <span>
-                        <strong>Echeance</strong>
-                        {formatDate(scholarship.deadline)}
+                        <strong>Échéance</strong>
+                        {formatScholarshipDeadline(scholarship)}
                       </span>
                       <span>
                         <strong>Places</strong>
-                        {scholarship.seats}
+                        {formatSeats(scholarship.seats)}
                       </span>
                       <span>
                         <strong>Audience</strong>
@@ -206,18 +224,30 @@ export default async function AdminDashboard({
                       </span>
                     </div>
 
+                    {scholarship.officialUrl ? (
+                      <a
+                        href={scholarship.officialUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-link"
+                      >
+                        Source officielle : {scholarship.officialSource}
+                      </a>
+                    ) : null}
+
                     <form action={updateScholarshipStatusAction} className="application-form">
                       <input type="hidden" name="scholarshipId" value={scholarship.id} />
                       <div className="field">
-                        <label htmlFor={`status-${scholarship.id}`}>Mettre a jour le statut</label>
+                        <label htmlFor={`status-${scholarship.id}`}>Mettre à jour le statut</label>
                         <select
                           id={`status-${scholarship.id}`}
                           name="status"
                           defaultValue={scholarship.status}
                         >
                           <option value="open">Ouverte</option>
-                          <option value="closing">Cloture proche</option>
-                          <option value="closed">Cloturee</option>
+                          <option value="closing">Clôture proche</option>
+                          <option value="upcoming">À venir</option>
+                          <option value="closed">Clôturée</option>
                         </select>
                       </div>
                       <button type="submit" className="button button--secondary">
@@ -233,12 +263,12 @@ export default async function AdminDashboard({
           <section className="panel">
             <div>
               <span className="eyebrow">Traitement des candidatures</span>
-              <h2 className="panel-title">Historique, pieces et decisions</h2>
+              <h2 className="panel-title">Historique, pièces et décisions</h2>
             </div>
 
             <div className="applications-stack">
               {applications.length === 0 ? (
-                <div className="empty-state">Aucune candidature n&apos;a encore ete deposee.</div>
+                <div className="empty-state">Aucune candidature n&apos;a encore été déposée.</div>
               ) : null}
 
               {applications.map((application) => {
@@ -258,11 +288,11 @@ export default async function AdminDashboard({
 
                     <div className="application-meta">
                       <span>
-                        <strong>Reference</strong>
+                        <strong>Référence</strong>
                         {application.reference}
                       </span>
                       <span>
-                        <strong>Depot</strong>
+                        <strong>Dépôt</strong>
                         {formatDateTime(application.submittedAt)}
                       </span>
                       <span>
@@ -276,7 +306,7 @@ export default async function AdminDashboard({
                     </div>
 
                     <div>
-                      <strong>Projet vise</strong>
+                      <strong>Projet visé</strong>
                       <p className="muted">{application.applicant.programChoice}</p>
                     </div>
 
@@ -326,11 +356,11 @@ export default async function AdminDashboard({
                           name="status"
                           defaultValue={application.status}
                         >
-                          <option value="received">Dossier recu</option>
+                          <option value="received">Dossier reçu</option>
                           <option value="under_review">En instruction</option>
-                          <option value="preselected">Preselection</option>
-                          <option value="forwarded">Transmis a l'etablissement</option>
-                          <option value="approved">Admission confirmee</option>
+                          <option value="preselected">Présélection</option>
+                          <option value="forwarded">Transmis à l'établissement</option>
+                          <option value="approved">Admission confirmée</option>
                           <option value="rejected">Non retenue</option>
                         </select>
                       </div>
@@ -343,7 +373,7 @@ export default async function AdminDashboard({
                         />
                       </div>
                       <button type="submit" className="button button--primary">
-                        Mettre a jour la candidature
+                        Mettre à jour la candidature
                       </button>
                     </form>
                   </article>

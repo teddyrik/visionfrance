@@ -11,11 +11,13 @@ import { isUploadFile, readString } from "@/lib/utils";
 
 export async function submitApplication(formData: FormData) {
   const scholarshipSlug = readString(formData.get("scholarshipSlug"));
-  const scholarship = await getScholarshipBySlug(scholarshipSlug);
+  const loadedScholarship = await getScholarshipBySlug(scholarshipSlug);
 
-  if (!scholarship) {
+  if (!loadedScholarship) {
     redirect("/?error=Bourse introuvable");
   }
+
+  const scholarship = loadedScholarship!;
 
   const phoneCountryCode = readString(formData.get("phoneCountryCode"));
   const phoneNumber = readString(formData.get("phoneNumber"));
@@ -68,12 +70,12 @@ export async function submitApplication(formData: FormData) {
   const files = [
     formData.get("identityDocument"),
     formData.get("lastDegreeDocument"),
-  ].filter(isUploadFile);
+  ].flatMap((value) => (value && isUploadFile(value) ? [value] : []));
 
   if (files.length !== 2) {
     redirect(
       `/bourses/${scholarship.slug}?error=${encodeURIComponent(
-        "Ajoutez la Carte Nationale d'identite et le Dernier diplome pour finaliser votre candidature.",
+        "Ajoutez la carte nationale d'identité et le dernier diplôme pour finaliser votre candidature.",
       )}#formulaire-candidature`,
     );
   }

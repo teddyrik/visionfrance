@@ -14,9 +14,9 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Vision France | Plateforme des bourses d'etudes",
+  title: "Vision France | Plateforme des bourses d'études",
   description:
-    "Plateforme Vision France pour publier les bourses d'etudes, recevoir les candidatures internationales et piloter leur traitement.",
+    "Plateforme Vision France pour publier les bourses d'études, recevoir les candidatures internationales et piloter leur traitement.",
   icons: {
     icon: "/globe.svg",
   },

@@ -6,7 +6,11 @@ import { StatusBadge } from "@/components/status-badge";
 import { submitApplication } from "@/app/actions";
 import { countries, getCountryFlag } from "@/lib/countries";
 import { getScholarshipBySlug } from "@/lib/data";
-import { firstQueryValue, formatDate, getScholarshipStatusMeta } from "@/lib/utils";
+import {
+  firstQueryValue,
+  formatScholarshipDeadline,
+  getScholarshipStatusMeta,
+} from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +25,13 @@ export default async function ScholarshipPage({
 }: ScholarshipPageProps) {
   const { slug } = await params;
   const messages = await searchParams;
-  const scholarship = await getScholarshipBySlug(slug);
+  const loadedScholarship = await getScholarshipBySlug(slug);
 
-  if (!scholarship) {
+  if (!loadedScholarship) {
     notFound();
   }
+
+  const scholarship = loadedScholarship!;
 
   const success = firstQueryValue(messages.success);
   const error = firstQueryValue(messages.error);
@@ -68,8 +74,8 @@ export default async function ScholarshipPage({
 
             <div className="facts-grid">
               <div className="detail-fact">
-                <strong>Echeance</strong>
-                <span>{formatDate(scholarship.deadline)}</span>
+                <strong>Échéance</strong>
+                <span>{formatScholarshipDeadline(scholarship)}</span>
               </div>
               <div className="detail-fact">
                 <strong>Couverture</strong>
@@ -80,7 +86,7 @@ export default async function ScholarshipPage({
                 <span>{scholarship.language}</span>
               </div>
               <div className="detail-fact">
-                <strong>Duree</strong>
+                <strong>Durée</strong>
                 <span>{scholarship.duration}</span>
               </div>
               <div className="detail-fact">
@@ -98,8 +104,8 @@ export default async function ScholarshipPage({
             <article className="panel">
               <div className="application-form">
                 <div>
-                  <span className="eyebrow">Presentation</span>
-                  <h2 className="panel-title">A propos du programme</h2>
+                  <span className="eyebrow">Présentation</span>
+                  <h2 className="panel-title">À propos du programme</h2>
                 </div>
                 <p className="muted">{scholarship.description}</p>
 
@@ -113,7 +119,7 @@ export default async function ScholarshipPage({
                 </div>
 
                 <div>
-                  <h3 className="panel-title">Conditions d&apos;eligibilite</h3>
+                  <h3 className="panel-title">Conditions d&apos;éligibilité</h3>
                   <ul className="muted">
                     {scholarship.eligibility.map((item) => (
                       <li key={item}>{item}</li>
@@ -122,23 +128,48 @@ export default async function ScholarshipPage({
                 </div>
 
                 <div>
-                  <h3 className="panel-title">Pieces demandees</h3>
+                  <h3 className="panel-title">Pièces demandées</h3>
                   <ul className="muted">
                     {scholarship.requiredDocuments.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
+                  <p className="muted">
+                    Des pièces complémentaires académiques peuvent être demandées
+                    par l&apos;établissement après une présélection.
+                  </p>
                 </div>
+
+                {scholarship.officialUrl ? (
+                  <div className="panel">
+                    <div>
+                      <span className="eyebrow">Source officielle</span>
+                      <h3 className="panel-title">{scholarship.officialSource}</h3>
+                    </div>
+                    <p className="muted">
+                      Fiche éditoriale vérifiée le {scholarship.verifiedAt ?? "19/03/2026"} à
+                      partir de la publication institutionnelle.
+                    </p>
+                    <a
+                      href={scholarship.officialUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="button button--secondary"
+                    >
+                      Ouvrir la source officielle
+                    </a>
+                  </div>
+                ) : null}
 
                 <div className="panel">
                   <div>
                     <span className="eyebrow">Circuit de traitement</span>
-                    <h3 className="panel-title">Comment votre dossier est traite</h3>
+                    <h3 className="panel-title">Comment votre dossier est traité</h3>
                   </div>
                   <div className="timeline-item">
                     <span className="step-index">1</span>
                     <div className="timeline-item__body">
-                      <strong>Depot sur Vision France</strong>
+                      <strong>Dépôt sur Vision France</strong>
                       <span className="muted">
                         Transmission du formulaire et des justificatifs sur la
                         plateforme.
@@ -150,7 +181,7 @@ export default async function ScholarshipPage({
                     <div className="timeline-item__body">
                       <strong>Instruction du dossier</strong>
                       <span className="muted">
-                        Verification des pieces, analyse du dossier et mise a jour
+                        Vérification des pièces, analyse du dossier et mise à jour
                         du statut.
                       </span>
                     </div>
@@ -158,10 +189,10 @@ export default async function ScholarshipPage({
                   <div className="timeline-item">
                     <span className="step-index">3</span>
                     <div className="timeline-item__body">
-                      <strong>Transmission aux etablissements</strong>
+                      <strong>Transmission aux établissements</strong>
                       <span className="muted">
-                        L&apos;universite ou l&apos;ecole est notifiee pour la suite du
-                        processus academique.
+                        L&apos;université ou l&apos;école est notifiée pour la suite du
+                        processus académique.
                       </span>
                     </div>
                   </div>
@@ -172,17 +203,17 @@ export default async function ScholarshipPage({
             <aside className="detail-side" id="formulaire-candidature">
               <section className="detail-side__card">
                 <span className="eyebrow">Candidature</span>
-                <h2 className="panel-title">Deposer votre dossier</h2>
+                <h2 className="panel-title">Déposer votre dossier</h2>
                 <p className="muted">
                   Le formulaire ci-dessous enregistre votre candidature et
-                  declenche un email de confirmation.
+                  déclenche un email de confirmation.
                 </p>
               </section>
 
               <section className="panel">
                 {success ? (
                   <div className="notice notice--success">
-                    Votre dossier a ete depose avec succes. Reference : {success}
+                    Votre dossier a été déposé avec succès. Référence : {success}
                   </div>
                 ) : null}
                 {error ? <div className="notice notice--error">{error}</div> : null}
@@ -192,7 +223,7 @@ export default async function ScholarshipPage({
 
                   <div className="forms-grid">
                     <div className="field">
-                      <label htmlFor="firstName">Prenom</label>
+                      <label htmlFor="firstName">Prénom</label>
                       <input id="firstName" name="firstName" required />
                     </div>
                     <div className="field">
@@ -204,9 +235,9 @@ export default async function ScholarshipPage({
                       <input id="email" name="email" type="email" required />
                     </div>
                     <div className="field">
-                      <label htmlFor="country">Pays de residence</label>
+                      <label htmlFor="country">Pays de résidence</label>
                       <select id="country" name="country" defaultValue="" required>
-                        <option value="">Choisir votre pays de residence</option>
+                        <option value="">Choisir votre pays de résidence</option>
                         {countries.map((country) => (
                           <option key={country.code} value={country.name}>
                             {getCountryFlag(country.code)} {country.name}
@@ -228,11 +259,11 @@ export default async function ScholarshipPage({
                       />
                     </div>
                     <div className="field">
-                      <label htmlFor="lastInstitution">Dernier etablissement</label>
+                      <label htmlFor="lastInstitution">Dernier établissement</label>
                       <input id="lastInstitution" name="lastInstitution" required />
                     </div>
                     <div className="field field--span-2">
-                      <label htmlFor="phoneCountryCode">Telephone</label>
+                      <label htmlFor="phoneCountryCode">Téléphone</label>
                       <div className="field-row">
                         <select
                           id="phoneCountryCode"
@@ -255,24 +286,24 @@ export default async function ScholarshipPage({
                           id="phoneNumber"
                           name="phoneNumber"
                           type="tel"
-                          placeholder="Numero de telephone"
-                          aria-label="Numero de telephone"
+                          placeholder="Numéro de téléphone"
+                          aria-label="Numéro de téléphone"
                           required
                         />
                       </div>
                       <small>
-                        Selectionnez l&apos;indicatif du pays puis saisissez le numero
+                        Sélectionnez l&apos;indicatif du pays puis saisissez le numéro
                         local.
                       </small>
                     </div>
                   </div>
 
                   <div className="field">
-                    <label htmlFor="programChoice">Formation ou parcours vise</label>
+                    <label htmlFor="programChoice">Formation ou parcours visé</label>
                     <input
                       id="programChoice"
                       name="programChoice"
-                      placeholder="Intitule du programme cible"
+                      placeholder="Intitulé du programme cible"
                       required
                     />
                   </div>
@@ -292,7 +323,7 @@ export default async function ScholarshipPage({
                     <textarea
                       id="motivation"
                       name="motivation"
-                      placeholder="Expliquez votre projet d'etudes et votre adequation avec cette bourse."
+                      placeholder="Expliquez votre projet d'études et votre adéquation avec cette bourse."
                       required
                     />
                   </div>
@@ -300,7 +331,7 @@ export default async function ScholarshipPage({
                   <div className="forms-grid">
                     <div className="field">
                       <label htmlFor="identityDocument">
-                        Carte Nationale d&apos;identite
+                        Carte nationale d&apos;identité
                       </label>
                       <input
                         id="identityDocument"
@@ -311,7 +342,7 @@ export default async function ScholarshipPage({
                       />
                     </div>
                     <div className="field">
-                      <label htmlFor="lastDegreeDocument">Dernier diplome</label>
+                      <label htmlFor="lastDegreeDocument">Dernier diplôme</label>
                       <input
                         id="lastDegreeDocument"
                         name="lastDegreeDocument"
@@ -323,8 +354,8 @@ export default async function ScholarshipPage({
                   </div>
                   <div className="field">
                     <small>
-                      Formats acceptes : PDF, JPG, PNG pour les deux justificatifs
-                      obligatoires.
+                      Formats acceptés : PDF, JPG, PNG pour les deux justificatifs
+                      obligatoires du dossier initial.
                     </small>
                   </div>
 
@@ -332,8 +363,8 @@ export default async function ScholarshipPage({
                     <input type="checkbox" name="consent" value="yes" />
                     <span>
                       Je certifie l&apos;exactitude des informations transmises et
-                      j&apos;autorise Vision France a traiter mon dossier pour les
-                      besoins de la procedure.
+                      j&apos;autorise Vision France à traiter mon dossier pour les
+                      besoins de la procédure.
                     </span>
                   </label>
 
