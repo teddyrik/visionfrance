@@ -1,5 +1,6 @@
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { constants } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { seedScholarships } from "@/lib/seed-data";
 import type {
@@ -21,7 +22,9 @@ import {
   slugify,
 } from "@/lib/utils";
 
-const STORAGE_DIR = path.join(process.cwd(), "storage");
+const STORAGE_DIR = process.env.VERCEL
+  ? path.join(tmpdir(), "vision-france")
+  : path.join(process.cwd(), "storage");
 const STORE_PATH = path.join(STORAGE_DIR, "store.json");
 const UPLOADS_DIR = path.join(STORAGE_DIR, "uploads");
 const legacySeedScholarshipIds = new Set([
