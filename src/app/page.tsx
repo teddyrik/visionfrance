@@ -155,7 +155,10 @@ export default async function Home({ searchParams }: HomePageProps) {
                       />
                       <figcaption className="hero-editorial__caption">
                         <span className="mini-label">Candidatures internationales</span>
-                        <strong>Un parcours de candidature plus net, plus lisible et plus institutionnel.</strong>
+                        <strong>
+                          Un parcours de candidature plus net, plus lisible et
+                          plus institutionnel.
+                        </strong>
                       </figcaption>
                     </figure>
 
@@ -168,14 +171,19 @@ export default async function Home({ searchParams }: HomePageProps) {
                         className="hero-editorial__image"
                       />
                       <figcaption className="hero-editorial__caption hero-editorial__caption--compact">
-                        <strong>Des programmes relies aux universites et ecoles partenaires.</strong>
+                        <strong>
+                          Des programmes reliés aux universités et écoles
+                          partenaires.
+                        </strong>
                       </figcaption>
                     </figure>
                   </div>
 
                   <article className="hero-highlight__card">
                     <span className="mini-label">Catalogue actualisé</span>
-                    <strong>Fiches vérifiées à partir des publications officielles</strong>
+                    <strong>
+                      Fiches vérifiées à partir des publications officielles
+                    </strong>
                     <p>
                       Mise à jour éditoriale du catalogue le {verifiedDate}, avec
                       liens directs vers les appels institutionnels et les pages
@@ -188,28 +196,36 @@ export default async function Home({ searchParams }: HomePageProps) {
                       <span>1</span>
                       <div>
                         <strong>{stats.openScholarships} appels actifs</strong>
-                        <p className="muted">ouverts, en clôture proche ou à venir</p>
+                        <p className="muted">
+                          ouverts, en clôture proche ou à venir
+                        </p>
                       </div>
                     </div>
                     <div className="hero-highlight__line">
                       <span>2</span>
                       <div>
                         <strong>{stats.institutions} établissements couverts</strong>
-                        <p className="muted">universités, écoles et programmes gradués</p>
+                        <p className="muted">
+                          universités, écoles et programmes gradués
+                        </p>
                       </div>
                     </div>
                     <div className="hero-highlight__line">
                       <span>3</span>
                       <div>
                         <strong>{stats.officialSources} sources officielles</strong>
-                        <p className="muted">liens institutionnels rattachés à chaque fiche</p>
+                        <p className="muted">
+                          liens institutionnels rattachés à chaque fiche
+                        </p>
                       </div>
                     </div>
                     <div className="hero-highlight__line">
                       <span>4</span>
                       <div>
                         <strong>{stats.featured} programmes à la une</strong>
-                        <p className="muted">sélection éditoriale des dispositifs structurants</p>
+                        <p className="muted">
+                          sélection éditoriale des dispositifs structurants
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -224,12 +240,14 @@ export default async function Home({ searchParams }: HomePageProps) {
             <div className="section__head">
               <div>
                 <span className="eyebrow">Partenaires institutionnels</span>
-                <h2 className="section-title">Les organismes qui accompagnent Vision France</h2>
+                <h2 className="section-title">
+                  Les organismes qui accompagnent Vision France
+                </h2>
               </div>
               <p className="section-copy">
-                Des acteurs publics et institutionnels engagés pour la visibilité
-                des bourses, l&apos;orientation et la coordination des parcours
-                étudiants.
+                Des acteurs publics et institutionnels engagés pour la
+                visibilité des bourses, l&apos;orientation et la coordination des
+                parcours étudiants.
               </p>
             </div>
 
@@ -265,13 +283,14 @@ export default async function Home({ searchParams }: HomePageProps) {
               <div>
                 <span className="eyebrow">Catalogue public</span>
                 <h2 className="section-title">
-                  Bourses actuellement publiées pour les candidates et candidats internationaux
+                  Bourses actuellement publiées pour les candidates et candidats
+                  internationaux
                 </h2>
               </div>
               <p className="section-copy">
-                Un catalogue éditorial structuré, lisible et professionnel, avec
-                source officielle, échéance claire et parcours de candidature
-                centralisé.
+                Un catalogue éditorial structuré, lisible et professionnel,
+                avec source officielle, échéance claire et parcours de
+                candidature centralisé.
               </p>
             </div>
 
@@ -367,7 +386,8 @@ export default async function Home({ searchParams }: HomePageProps) {
                 <h3 className="panel-title">3. Relais vers les établissements</h3>
                 <p className="muted">
                   Lorsque le dossier est mature, la plateforme alerte
-                  l&apos;université ou l&apos;école afin qu&apos;elle poursuive la procédure.
+                  l&apos;université ou l&apos;école afin qu&apos;elle poursuive la
+                  procédure.
                 </p>
               </article>
             </div>
@@ -379,7 +399,9 @@ export default async function Home({ searchParams }: HomePageProps) {
             <div className="section__head">
               <div>
                 <span className="eyebrow">Suivi de candidature</span>
-                <h2 className="section-title">Un parcours transparent pour chaque dossier</h2>
+                <h2 className="section-title">
+                  Un parcours transparent pour chaque dossier
+                </h2>
               </div>
             </div>
             <div className="impact-grid">

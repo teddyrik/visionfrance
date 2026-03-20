@@ -383,7 +383,7 @@ export async function saveApplicationSupabase(
   ];
 
   history[0]!.note =
-    `Dossier depose par le candidat sur la plateforme Vision France. Reference de paiement : ${input.paymentReference}.`;
+    `Dossier déposé par le candidat sur la plateforme Vision France. Référence de paiement : ${input.paymentReference}.`;
 
   const [row] = await requestSupabase<ApplicationRow[]>(
     "/rest/v1/applications",

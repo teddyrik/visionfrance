@@ -46,7 +46,7 @@ export function ScholarshipApplicationForm({
     }
 
     setPaymentHint(
-      "Formulaire valide. Finalisez maintenant le paiement, puis revenez saisir la reference de paiement et soumettre le dossier.",
+      "Formulaire valide. Finalisez maintenant le paiement, puis revenez saisir la référence de paiement et soumettre le dossier.",
     );
     window.open(paymentUrl, "_blank", "noopener,noreferrer");
   }
@@ -55,7 +55,7 @@ export function ScholarshipApplicationForm({
     <section className="panel">
       {success ? (
         <div className="notice notice--success">
-          Votre dossier a ete depose avec succes. Reference : {success}
+          Votre dossier a été déposé avec succès. Référence : {success}
         </div>
       ) : null}
       {error ? <div className="notice notice--error">{error}</div> : null}
@@ -69,16 +69,16 @@ export function ScholarshipApplicationForm({
             <div>
               <h3 className="panel-title">Remplir le formulaire</h3>
               <p className="muted">
-                Completez d'abord le dossier de candidature et joignez les deux
-                justificatifs obligatoires. Le paiement ne s'ouvre qu'apres cette
-                etape.
+                Complétez d&apos;abord le dossier de candidature et joignez les deux
+                justificatifs obligatoires. Le paiement ne s&apos;ouvre qu&apos;après cette
+                étape.
               </p>
             </div>
           </div>
 
           <div className="forms-grid">
             <div className="field">
-              <label htmlFor="firstName">Prenom</label>
+              <label htmlFor="firstName">Prénom</label>
               <input id="firstName" name="firstName" data-payment-required="true" required />
             </div>
             <div className="field">
@@ -96,7 +96,7 @@ export function ScholarshipApplicationForm({
               />
             </div>
             <div className="field">
-              <label htmlFor="country">Pays de residence</label>
+              <label htmlFor="country">Pays de résidence</label>
               <select
                 id="country"
                 name="country"
@@ -104,7 +104,7 @@ export function ScholarshipApplicationForm({
                 data-payment-required="true"
                 required
               >
-                <option value="">Choisir votre pays de residence</option>
+                <option value="">Choisir votre pays de résidence</option>
                 {countries.map((country) => (
                   <option key={country.code} value={country.name}>
                     {getCountryFlag(country.code)} {country.name}
@@ -133,7 +133,7 @@ export function ScholarshipApplicationForm({
               />
             </div>
             <div className="field">
-              <label htmlFor="lastInstitution">Dernier etablissement</label>
+              <label htmlFor="lastInstitution">Dernier établissement</label>
               <input
                 id="lastInstitution"
                 name="lastInstitution"
@@ -142,7 +142,7 @@ export function ScholarshipApplicationForm({
               />
             </div>
             <div className="field field--span-2">
-              <label htmlFor="phoneCountryCode">Telephone</label>
+              <label htmlFor="phoneCountryCode">Téléphone</label>
               <div className="field-row">
                 <select
                   id="phoneCountryCode"
@@ -166,24 +166,24 @@ export function ScholarshipApplicationForm({
                   id="phoneNumber"
                   name="phoneNumber"
                   type="tel"
-                  placeholder="Numero de telephone"
-                  aria-label="Numero de telephone"
+                  placeholder="Numéro de téléphone"
+                  aria-label="Numéro de téléphone"
                   data-payment-required="true"
                   required
                 />
               </div>
               <small>
-                Selectionnez l'indicatif du pays puis saisissez le numero local.
+                Sélectionnez l&apos;indicatif du pays puis saisissez le numéro local.
               </small>
             </div>
           </div>
 
           <div className="field">
-            <label htmlFor="programChoice">Formation ou parcours vise</label>
+            <label htmlFor="programChoice">Formation ou parcours visé</label>
             <input
               id="programChoice"
               name="programChoice"
-              placeholder="Intitule du programme cible"
+              placeholder="Intitulé du programme cible"
               data-payment-required="true"
               required
             />
@@ -199,7 +199,7 @@ export function ScholarshipApplicationForm({
             <textarea
               id="motivation"
               name="motivation"
-              placeholder="Expliquez votre projet d'etudes et votre adequation avec cette bourse."
+              placeholder="Expliquez votre projet d'études et votre adéquation avec cette bourse."
               data-payment-required="true"
               required
             />
@@ -207,7 +207,7 @@ export function ScholarshipApplicationForm({
 
           <div className="forms-grid">
             <div className="field">
-              <label htmlFor="identityDocument">Carte nationale d'identite</label>
+              <label htmlFor="identityDocument">Carte nationale d&apos;identité</label>
               <input
                 id="identityDocument"
                 name="identityDocument"
@@ -218,7 +218,7 @@ export function ScholarshipApplicationForm({
               />
             </div>
             <div className="field">
-              <label htmlFor="lastDegreeDocument">Dernier diplome</label>
+              <label htmlFor="lastDegreeDocument">Dernier diplôme</label>
               <input
                 id="lastDegreeDocument"
                 name="lastDegreeDocument"
@@ -232,7 +232,7 @@ export function ScholarshipApplicationForm({
 
           <div className="field">
             <small>
-              Formats acceptes : PDF, JPG, PNG pour les deux justificatifs
+              Formats acceptés : PDF, JPG, PNG pour les deux justificatifs
               obligatoires du dossier initial.
             </small>
           </div>
@@ -244,8 +244,8 @@ export function ScholarshipApplicationForm({
             <div>
               <h3 className="panel-title">Payer puis soumettre le dossier</h3>
               <p className="muted">
-                Une fois le formulaire complete, ouvrez le lien de paiement,
-                recuperer votre reference, puis confirmez le paiement pour envoyer
+                Une fois le formulaire complété, ouvrez le lien de paiement,
+                récupérez votre référence, puis confirmez le paiement pour envoyer
                 la candidature.
               </p>
             </div>
@@ -257,17 +257,17 @@ export function ScholarshipApplicationForm({
               className="button button--accent"
               onClick={openPayment}
             >
-              Proceder au paiement
+              Procéder au paiement
             </button>
             <span className="payment-note">
-              Le lien de paiement ne s'ouvre qu'apres validation du formulaire.
+              Le lien de paiement ne s&apos;ouvre qu&apos;après validation du formulaire.
             </span>
           </div>
 
           {paymentHint ? <p className="payment-note">{paymentHint}</p> : null}
 
           <div className="field">
-            <label htmlFor="paymentReference">Reference de paiement</label>
+            <label htmlFor="paymentReference">Référence de paiement</label>
             <input
               id="paymentReference"
               name="paymentReference"
@@ -275,15 +275,15 @@ export function ScholarshipApplicationForm({
               required
             />
             <small>
-              Renseignez la reference affichee apres le paiement afin de finaliser
-              l'etude de votre dossier.
+              Renseignez la référence affichée après le paiement afin de finaliser
+              l&apos;étude de votre dossier.
             </small>
           </div>
 
           <label className="consent">
             <input type="checkbox" name="paymentConfirmed" value="yes" />
             <span>
-              Je confirme avoir effectue le paiement des frais d'etude de dossier
+              Je confirme avoir effectué le paiement des frais d&apos;étude de dossier
               via le lien de paiement Vision France.
             </span>
           </label>
@@ -291,8 +291,8 @@ export function ScholarshipApplicationForm({
           <label className="consent">
             <input type="checkbox" name="consent" value="yes" />
             <span>
-              Je certifie l'exactitude des informations transmises et j'autorise
-              Vision France a traiter mon dossier pour les besoins de la procedure.
+              Je certifie l&apos;exactitude des informations transmises et j&apos;autorise
+              Vision France à traiter mon dossier pour les besoins de la procédure.
             </span>
           </label>
 

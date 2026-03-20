@@ -365,7 +365,7 @@ export default async function AdminDashboard({
                           <option value="received">Dossier reçu</option>
                           <option value="under_review">En instruction</option>
                           <option value="preselected">Présélection</option>
-                          <option value="forwarded">Transmis à l'établissement</option>
+                          <option value="forwarded">Transmis à l&apos;établissement</option>
                           <option value="approved">Admission confirmée</option>
                           <option value="rejected">Non retenue</option>
                         </select>

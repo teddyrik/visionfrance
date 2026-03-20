@@ -77,7 +77,7 @@ export default async function ScholarshipPage({
 
             <div className="facts-grid">
               <div className="detail-fact">
-                <strong>Echeance</strong>
+                <strong>Échéance</strong>
                 <span>{formatScholarshipDeadline(scholarship)}</span>
               </div>
               <div className="detail-fact">
@@ -89,7 +89,7 @@ export default async function ScholarshipPage({
                 <span>{scholarship.language}</span>
               </div>
               <div className="detail-fact">
-                <strong>Duree</strong>
+                <strong>Durée</strong>
                 <span>{scholarship.duration}</span>
               </div>
               <div className="detail-fact">
@@ -107,8 +107,8 @@ export default async function ScholarshipPage({
             <article className="panel">
               <div className="application-form">
                 <div>
-                  <span className="eyebrow">Presentation</span>
-                  <h2 className="panel-title">A propos du programme</h2>
+                  <span className="eyebrow">Présentation</span>
+                  <h2 className="panel-title">À propos du programme</h2>
                 </div>
                 <p className="muted">{scholarship.description}</p>
 
@@ -122,7 +122,7 @@ export default async function ScholarshipPage({
                 </div>
 
                 <div>
-                  <h3 className="panel-title">Conditions d'eligibilite</h3>
+                  <h3 className="panel-title">Conditions d&apos;éligibilité</h3>
                   <ul className="muted">
                     {scholarship.eligibility.map((item) => (
                       <li key={item}>{item}</li>
@@ -131,15 +131,15 @@ export default async function ScholarshipPage({
                 </div>
 
                 <div>
-                  <h3 className="panel-title">Pieces demandees</h3>
+                  <h3 className="panel-title">Pièces demandées</h3>
                   <ul className="muted">
                     {scholarship.requiredDocuments.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
                   <p className="muted">
-                    Des pieces complementaires academiques peuvent etre demandees
-                    par l'etablissement apres une preselection.
+                    Des pièces complémentaires académiques peuvent être demandées
+                    par l&apos;établissement après une présélection.
                   </p>
                 </div>
 
@@ -149,7 +149,7 @@ export default async function ScholarshipPage({
                     <h3 className="panel-title">{scholarship.officialSource}</h3>
                   </div>
                   <p className="muted">
-                    Fiche editoriale verifiee le {scholarship.verifiedAt ?? "19/03/2026"} a
+                    Fiche éditoriale vérifiée le {scholarship.verifiedAt ?? "19/03/2026"} à
                     partir de la publication institutionnelle.
                   </p>
                   <a
@@ -171,15 +171,15 @@ export default async function ScholarshipPage({
                     className="detail-editorial__image"
                   />
                   <figcaption className="detail-editorial__caption">
-                    <span className="mini-label">Cadre d'etudes</span>
-                    <strong>Une presentation plus institutionnelle des campus et des etablissements.</strong>
+                    <span className="mini-label">Cadre d&apos;études</span>
+                    <strong>Une présentation plus institutionnelle des campus et des établissements.</strong>
                   </figcaption>
                 </figure>
 
                 <div className="panel">
                   <div>
                     <span className="eyebrow">Circuit de traitement</span>
-                    <h3 className="panel-title">Comment votre dossier est traite</h3>
+                    <h3 className="panel-title">Comment votre dossier est traité</h3>
                   </div>
 
                   <div className="timeline-item">
@@ -187,7 +187,7 @@ export default async function ScholarshipPage({
                     <div className="timeline-item__body">
                       <strong>Remplissage du dossier</strong>
                       <span className="muted">
-                        Le candidat complete d'abord son formulaire et prepare les
+                        Le candidat complète d&apos;abord son formulaire et prépare les
                         deux justificatifs obligatoires.
                       </span>
                     </div>
@@ -198,8 +198,8 @@ export default async function ScholarshipPage({
                     <div className="timeline-item__body">
                       <strong>Paiement puis soumission</strong>
                       <span className="muted">
-                        Les frais d'etude de dossier sont regles apres validation du
-                        formulaire, avant l'envoi final de la candidature.
+                        Les frais d&apos;étude de dossier sont réglés après validation du
+                        formulaire, avant l&apos;envoi final de la candidature.
                       </span>
                     </div>
                   </div>
@@ -209,7 +209,7 @@ export default async function ScholarshipPage({
                     <div className="timeline-item__body">
                       <strong>Instruction du dossier</strong>
                       <span className="muted">
-                        Verification des pieces, controle administratif et mise a
+                        Vérification des pièces, contrôle administratif et mise à
                         jour du statut de candidature.
                       </span>
                     </div>
@@ -218,10 +218,10 @@ export default async function ScholarshipPage({
                   <div className="timeline-item">
                     <span className="step-index">4</span>
                     <div className="timeline-item__body">
-                      <strong>Transmission aux etablissements</strong>
+                      <strong>Transmission aux établissements</strong>
                       <span className="muted">
-                        L'universite ou l'ecole est notifiee pour poursuivre le
-                        processus academique avec le candidat.
+                        L&apos;université ou l&apos;école est notifiée pour poursuivre le
+                        processus académique avec le candidat.
                       </span>
                     </div>
                   </div>
@@ -232,10 +232,10 @@ export default async function ScholarshipPage({
             <aside className="detail-side" id="formulaire-candidature">
               <section className="detail-side__card">
                 <span className="eyebrow">Candidature</span>
-                <h2 className="panel-title">Deposer votre dossier en 2 etapes</h2>
+                <h2 className="panel-title">Déposer votre dossier en 2 étapes</h2>
                 <p className="muted">
-                  Etape 1 : remplir le formulaire complet et joindre les pieces.
-                  Etape 2 : proceder au paiement, renseigner la reference puis
+                  Étape 1 : remplir le formulaire complet et joindre les pièces.
+                  Étape 2 : procéder au paiement, renseigner la référence puis
                   soumettre la candidature.
                 </p>
               </section>
