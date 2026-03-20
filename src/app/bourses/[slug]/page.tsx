@@ -162,35 +162,19 @@ export default async function ScholarshipPage({
                   </a>
                 </div>
 
-                <div className="detail-visual-grid">
-                  <figure className="detail-visual-card detail-visual-card--wide">
-                    <Image
-                      src={editorialMedia.parisCampus.src}
-                      alt={editorialMedia.parisCampus.alt}
-                      width={editorialMedia.parisCampus.width}
-                      height={editorialMedia.parisCampus.height}
-                      className="detail-visual-card__image"
-                    />
-                    <figcaption className="detail-visual-card__body">
-                      <strong>{editorialMedia.parisCampus.title}</strong>
-                      <span>{editorialMedia.parisCampus.caption}</span>
-                    </figcaption>
-                  </figure>
-
-                  <figure className="detail-visual-card">
-                    <Image
-                      src={editorialMedia.studentFocus.src}
-                      alt={editorialMedia.studentFocus.alt}
-                      width={editorialMedia.studentFocus.width}
-                      height={editorialMedia.studentFocus.height}
-                      className="detail-visual-card__image"
-                    />
-                    <figcaption className="detail-visual-card__body">
-                      <strong>{editorialMedia.studentFocus.title}</strong>
-                      <span>{editorialMedia.studentFocus.caption}</span>
-                    </figcaption>
-                  </figure>
-                </div>
+                <figure className="detail-editorial">
+                  <Image
+                    src={editorialMedia.parisCampus.src}
+                    alt={editorialMedia.parisCampus.alt}
+                    width={editorialMedia.parisCampus.width}
+                    height={editorialMedia.parisCampus.height}
+                    className="detail-editorial__image"
+                  />
+                  <figcaption className="detail-editorial__caption">
+                    <span className="mini-label">Cadre d'etudes</span>
+                    <strong>Une presentation plus institutionnelle des campus et des etablissements.</strong>
+                  </figcaption>
+                </figure>
 
                 <div className="panel">
                   <div>
