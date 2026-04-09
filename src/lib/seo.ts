@@ -3,7 +3,7 @@ import type { Scholarship } from "@/lib/types";
 export const siteConfig = {
   name: "Vision France",
   shortName: "Vision France",
-  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://visionfrance.org").replace(
+  url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.visionfrance.org").replace(
     /\/$/,
     "",
   ),
