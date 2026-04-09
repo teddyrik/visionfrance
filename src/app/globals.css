@@ -895,6 +895,42 @@ svg {
   font-weight: 700;
 }
 
+.guide-grid,
+.guide-stack {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.guide-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.guide-card,
+.guide-faq-card {
+  min-height: 100%;
+}
+
+.guide-card__head,
+.guide-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.guide-bullets {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.guide-link-stack {
+  display: grid;
+  gap: 0.7rem;
+}
+
 .empty-state {
   padding: 2rem;
   text-align: center;
@@ -1000,6 +1036,7 @@ svg {
   .admin-topbar__inner,
   .footer__inner,
   .section__head,
+  .guide-card__footer,
   .scholarship-card__footer,
   .application-step__header,
   .application-step__actions {

@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
 import { Manrope, Source_Serif_4 } from "next/font/google";
+import { JsonLd } from "@/components/json-ld";
+import {
+  buildOrganizationSchema,
+  buildWebSiteSchema,
+  siteConfig,
+} from "@/lib/seo";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -14,11 +20,36 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Vision France | Plateforme des bourses d'études",
-  description:
-    "Plateforme Vision France pour publier les bourses d'études, recevoir les candidatures internationales et piloter leur traitement.",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: "Vision France",
+    template: "%s | Vision France",
+  },
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
+  keywords: siteConfig.keywords,
+  category: "education",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   icons: {
-    icon: "/globe.svg",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/globe.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/globe.svg",
   },
 };
 
@@ -29,7 +60,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${manrope.variable} ${sourceSerif.variable}`}>
-      <body>{children}</body>
+      <body>
+        <JsonLd data={[buildOrganizationSchema(), buildWebSiteSchema()]} />
+        {children}
+      </body>
     </html>
   );
 }

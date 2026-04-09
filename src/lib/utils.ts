@@ -149,3 +149,30 @@ export function firstQueryValue(value?: string | string[]) {
 
   return value;
 }
+
+export function filterScholarships(
+  items: Scholarship[],
+  filters: {
+    query: string;
+    level: string;
+    status: string;
+  },
+) {
+  return items.filter((scholarship) => {
+    const text = [
+      scholarship.title,
+      scholarship.summary,
+      scholarship.institution,
+      scholarship.location,
+      scholarship.level,
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    const matchesQuery = !filters.query || text.includes(filters.query.toLowerCase());
+    const matchesLevel = !filters.level || scholarship.level.includes(filters.level);
+    const matchesStatus = !filters.status || scholarship.status === filters.status;
+
+    return matchesQuery && matchesLevel && matchesStatus;
+  });
+}
