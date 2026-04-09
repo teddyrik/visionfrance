@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { countries, getCountryFlag } from "@/lib/countries";
+import { PAYMENT_SUCCESS_MESSAGE_TYPE } from "@/lib/payment";
 
 type ScholarshipApplicationFormProps = {
   scholarshipSlug: string;
@@ -11,6 +12,29 @@ type ScholarshipApplicationFormProps = {
   submitAction: (formData: FormData) => void | Promise<void>;
 };
 
+type PaymentState = "idle" | "opened" | "approved";
+
+function getPaymentStorageKey(scholarshipSlug: string) {
+  return `vision-france-payment:${scholarshipSlug}`;
+}
+
+function buildPopupFeatures() {
+  const width = 540;
+  const height = 860;
+  const left = Math.max(0, Math.round((window.screen.width - width) / 2));
+  const top = Math.max(0, Math.round((window.screen.height - height) / 2));
+
+  return [
+    "popup=yes",
+    `width=${width}`,
+    `height=${height}`,
+    `left=${left}`,
+    `top=${top}`,
+    "resizable=yes",
+    "scrollbars=yes",
+  ].join(",");
+}
+
 export function ScholarshipApplicationForm({
   scholarshipSlug,
   success,
@@ -19,7 +43,113 @@ export function ScholarshipApplicationForm({
   submitAction,
 }: ScholarshipApplicationFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [paymentHint, setPaymentHint] = useState<string>("");
+  const paymentPopupRef = useRef<Window | null>(null);
+  const paymentReferenceInputRef = useRef<HTMLInputElement>(null);
+  const [paymentHint, setPaymentHint] = useState("");
+  const [paymentState, setPaymentState] = useState<PaymentState>("idle");
+  const [paymentReference, setPaymentReference] = useState("");
+
+  const paymentApproved = paymentState === "approved";
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const storageKey = getPaymentStorageKey(scholarshipSlug);
+
+    if (success) {
+      window.sessionStorage.removeItem(storageKey);
+      setPaymentState("idle");
+      setPaymentReference("");
+      setPaymentHint("");
+      return;
+    }
+
+    const cachedValue = window.sessionStorage.getItem(storageKey);
+
+    if (!cachedValue) {
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(cachedValue) as {
+        paymentApproved?: boolean;
+        paymentReference?: string;
+      };
+
+      if (parsed.paymentApproved) {
+        setPaymentState("approved");
+        setPaymentReference(parsed.paymentReference ?? "");
+        setPaymentHint(
+          "Paiement deja confirme. Vous pouvez finaliser la soumission du dossier.",
+        );
+      }
+    } catch {
+      window.sessionStorage.removeItem(storageKey);
+    }
+  }, [scholarshipSlug, success]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    function handlePaymentSuccess(event: MessageEvent) {
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+
+      const data = event.data as {
+        type?: string;
+        paymentReference?: string;
+      };
+
+      if (data?.type !== PAYMENT_SUCCESS_MESSAGE_TYPE) {
+        return;
+      }
+
+      const nextReference = data.paymentReference?.trim() ?? "";
+
+      setPaymentState("approved");
+      setPaymentReference(nextReference);
+      setPaymentHint(
+        "Paiement approuve. Verifiez la reference puis soumettez votre dossier.",
+      );
+
+      window.sessionStorage.setItem(
+        getPaymentStorageKey(scholarshipSlug),
+        JSON.stringify({
+          paymentApproved: true,
+          paymentReference: nextReference,
+        }),
+      );
+
+      paymentPopupRef.current = null;
+
+      requestAnimationFrame(() => {
+        paymentReferenceInputRef.current?.focus();
+      });
+    }
+
+    window.addEventListener("message", handlePaymentSuccess);
+
+    return () => window.removeEventListener("message", handlePaymentSuccess);
+  }, [scholarshipSlug]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !paymentApproved) {
+      return;
+    }
+
+    window.sessionStorage.setItem(
+      getPaymentStorageKey(scholarshipSlug),
+      JSON.stringify({
+        paymentApproved: true,
+        paymentReference,
+      }),
+    );
+  }, [paymentApproved, paymentReference, scholarshipSlug]);
 
   function openPayment() {
     const form = formRef.current;
@@ -45,23 +175,53 @@ export function ScholarshipApplicationForm({
       }
     }
 
-    setPaymentHint(
-      "Formulaire valide. Finalisez maintenant le paiement, puis revenez saisir la référence de paiement et soumettre le dossier.",
+    const popupUrl = `/paiement?paymentUrl=${encodeURIComponent(paymentUrl)}`;
+    const popup = window.open(
+      popupUrl,
+      "vision-france-payment",
+      buildPopupFeatures(),
     );
-    window.open(paymentUrl, "_blank", "noopener,noreferrer");
+
+    if (!popup) {
+      setPaymentHint(
+        "Le navigateur a bloque la pop-up de paiement. Autorisez les pop-ups puis relancez le paiement.",
+      );
+      return;
+    }
+
+    paymentPopupRef.current = popup;
+    popup.focus();
+
+    if (!paymentApproved) {
+      setPaymentState("opened");
+    }
+
+    setPaymentHint(
+      paymentApproved
+        ? "La pop-up de paiement est rouverte. Si une nouvelle reference vous est fournie, validez a nouveau l'ecran de succes pour la mettre a jour."
+        : "La fenetre de paiement est ouverte. Une fois le paiement termine, validez l'ecran de succes pour approuver la soumission du dossier.",
+    );
+  }
+
+  function handlePaymentReferenceChange(event: ChangeEvent<HTMLInputElement>) {
+    const nextValue = event.target.value;
+    setPaymentReference(nextValue);
   }
 
   return (
     <section className="panel">
       {success ? (
         <div className="notice notice--success">
-          Votre dossier a été déposé avec succès. Référence : {success}
+          Votre dossier a ete depose avec succes. Reference : {success}
         </div>
       ) : null}
       {error ? <div className="notice notice--error">{error}</div> : null}
 
       <form ref={formRef} action={submitAction} className="application-form">
         <input type="hidden" name="scholarshipSlug" value={scholarshipSlug} />
+        {paymentApproved ? (
+          <input type="hidden" name="paymentConfirmed" value="yes" />
+        ) : null}
 
         <section className="application-step">
           <div className="application-step__header">
@@ -69,16 +229,16 @@ export function ScholarshipApplicationForm({
             <div>
               <h3 className="panel-title">Remplir le formulaire</h3>
               <p className="muted">
-                Complétez d&apos;abord le dossier de candidature et joignez les deux
-                justificatifs obligatoires. Le paiement ne s&apos;ouvre qu&apos;après cette
-                étape.
+                Completez d&apos;abord le dossier de candidature et joignez les deux
+                justificatifs obligatoires. Le paiement ne s&apos;ouvre qu&apos;apres cette
+                etape.
               </p>
             </div>
           </div>
 
           <div className="forms-grid">
             <div className="field">
-              <label htmlFor="firstName">Prénom</label>
+              <label htmlFor="firstName">Prenom</label>
               <input id="firstName" name="firstName" data-payment-required="true" required />
             </div>
             <div className="field">
@@ -96,7 +256,7 @@ export function ScholarshipApplicationForm({
               />
             </div>
             <div className="field">
-              <label htmlFor="country">Pays de résidence</label>
+              <label htmlFor="country">Pays de residence</label>
               <select
                 id="country"
                 name="country"
@@ -104,7 +264,7 @@ export function ScholarshipApplicationForm({
                 data-payment-required="true"
                 required
               >
-                <option value="">Choisir votre pays de résidence</option>
+                <option value="">Choisir votre pays de residence</option>
                 {countries.map((country) => (
                   <option key={country.code} value={country.name}>
                     {getCountryFlag(country.code)} {country.name}
@@ -133,7 +293,7 @@ export function ScholarshipApplicationForm({
               />
             </div>
             <div className="field">
-              <label htmlFor="lastInstitution">Dernier établissement</label>
+              <label htmlFor="lastInstitution">Dernier etablissement</label>
               <input
                 id="lastInstitution"
                 name="lastInstitution"
@@ -142,7 +302,7 @@ export function ScholarshipApplicationForm({
               />
             </div>
             <div className="field field--span-2">
-              <label htmlFor="phoneCountryCode">Téléphone</label>
+              <label htmlFor="phoneCountryCode">Telephone</label>
               <div className="field-row">
                 <select
                   id="phoneCountryCode"
@@ -166,24 +326,24 @@ export function ScholarshipApplicationForm({
                   id="phoneNumber"
                   name="phoneNumber"
                   type="tel"
-                  placeholder="Numéro de téléphone"
-                  aria-label="Numéro de téléphone"
+                  placeholder="Numero de telephone"
+                  aria-label="Numero de telephone"
                   data-payment-required="true"
                   required
                 />
               </div>
               <small>
-                Sélectionnez l&apos;indicatif du pays puis saisissez le numéro local.
+                Selectionnez l&apos;indicatif du pays puis saisissez le numero local.
               </small>
             </div>
           </div>
 
           <div className="field">
-            <label htmlFor="programChoice">Formation ou parcours visé</label>
+            <label htmlFor="programChoice">Formation ou parcours vise</label>
             <input
               id="programChoice"
               name="programChoice"
-              placeholder="Intitulé du programme cible"
+              placeholder="Intitule du programme cible"
               data-payment-required="true"
               required
             />
@@ -199,7 +359,7 @@ export function ScholarshipApplicationForm({
             <textarea
               id="motivation"
               name="motivation"
-              placeholder="Expliquez votre projet d'études et votre adéquation avec cette bourse."
+              placeholder="Expliquez votre projet d'etudes et votre adequation avec cette bourse."
               data-payment-required="true"
               required
             />
@@ -207,7 +367,7 @@ export function ScholarshipApplicationForm({
 
           <div className="forms-grid">
             <div className="field">
-              <label htmlFor="identityDocument">Carte nationale d&apos;identité</label>
+              <label htmlFor="identityDocument">Carte nationale d&apos;identite</label>
               <input
                 id="identityDocument"
                 name="identityDocument"
@@ -218,7 +378,7 @@ export function ScholarshipApplicationForm({
               />
             </div>
             <div className="field">
-              <label htmlFor="lastDegreeDocument">Dernier diplôme</label>
+              <label htmlFor="lastDegreeDocument">Dernier diplome</label>
               <input
                 id="lastDegreeDocument"
                 name="lastDegreeDocument"
@@ -232,7 +392,7 @@ export function ScholarshipApplicationForm({
 
           <div className="field">
             <small>
-              Formats acceptés : PDF, JPG, PNG pour les deux justificatifs
+              Formats acceptes : PDF, JPG, PNG pour les deux justificatifs
               obligatoires du dossier initial.
             </small>
           </div>
@@ -244,9 +404,9 @@ export function ScholarshipApplicationForm({
             <div>
               <h3 className="panel-title">Payer puis soumettre le dossier</h3>
               <p className="muted">
-                Une fois le formulaire complété, ouvrez le lien de paiement,
-                récupérez votre référence, puis confirmez le paiement pour envoyer
-                la candidature.
+                Une fois le formulaire complete, ouvrez le paiement dans la pop-up
+                Vision France. Lorsque l&apos;ecran de paiement reussi apparait,
+                validez la reference pour approuver la soumission.
               </p>
             </div>
           </div>
@@ -257,46 +417,66 @@ export function ScholarshipApplicationForm({
               className="button button--accent"
               onClick={openPayment}
             >
-              Procéder au paiement
+              {paymentApproved ? "Reouvrir le paiement" : "Proceder au paiement"}
             </button>
             <span className="payment-note">
-              Le lien de paiement ne s&apos;ouvre qu&apos;après validation du formulaire.
+              Le paiement s&apos;ouvre dans une pop-up securisee apres validation du
+              formulaire.
             </span>
           </div>
+
+          {paymentState === "opened" ? (
+            <div className="payment-status-card">
+              <strong>Paiement en cours</strong>
+              <p className="payment-note">
+                Terminez le paiement dans la fenetre ouverte, puis validez l&apos;ecran
+                de succes pour revenir ici avec la reference.
+              </p>
+            </div>
+          ) : null}
+
+          {paymentApproved ? (
+            <div className="payment-status-card payment-status-card--success">
+              <strong>Paiement approuve</strong>
+              <p className="payment-note">
+                La soumission est maintenant autorisee. Verifiez la reference puis
+                envoyez le dossier.
+              </p>
+            </div>
+          ) : null}
 
           {paymentHint ? <p className="payment-note">{paymentHint}</p> : null}
 
           <div className="field">
-            <label htmlFor="paymentReference">Référence de paiement</label>
+            <label htmlFor="paymentReference">Reference de paiement</label>
             <input
+              ref={paymentReferenceInputRef}
               id="paymentReference"
               name="paymentReference"
               placeholder="Ex. MF-2026-001234"
+              value={paymentReference}
+              onChange={handlePaymentReferenceChange}
               required
             />
             <small>
-              Renseignez la référence affichée après le paiement afin de finaliser
-              l&apos;étude de votre dossier.
+              La reference est rapatriee depuis l&apos;ecran de succes du paiement. Vous
+              pouvez la corriger ici si necessaire.
             </small>
           </div>
-
-          <label className="consent">
-            <input type="checkbox" name="paymentConfirmed" value="yes" />
-            <span>
-              Je confirme avoir effectué le paiement des frais d&apos;étude de dossier
-              via le lien de paiement Vision France.
-            </span>
-          </label>
 
           <label className="consent">
             <input type="checkbox" name="consent" value="yes" />
             <span>
               Je certifie l&apos;exactitude des informations transmises et j&apos;autorise
-              Vision France à traiter mon dossier pour les besoins de la procédure.
+              Vision France a traiter mon dossier pour les besoins de la procedure.
             </span>
           </label>
 
-          <button className="button button--accent button--block" type="submit">
+          <button
+            className="button button--accent button--block"
+            type="submit"
+            disabled={!paymentApproved}
+          >
             Soumettre ma candidature
           </button>
         </section>

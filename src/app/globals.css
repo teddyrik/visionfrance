@@ -157,6 +157,13 @@ svg {
   transform: translateY(-1px);
 }
 
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  box-shadow: none;
+}
+
 .button--primary {
   color: #fff;
   background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
@@ -831,6 +838,75 @@ svg {
   line-height: 1.6;
 }
 
+.payment-status-card {
+  display: grid;
+  gap: 0.4rem;
+  padding: 1rem 1.1rem;
+  border-radius: 18px;
+  background: rgba(13, 47, 111, 0.05);
+  border: 1px solid rgba(13, 47, 111, 0.12);
+}
+
+.payment-status-card strong {
+  color: var(--ink);
+}
+
+.payment-status-card--success {
+  background: var(--success-soft);
+  border-color: rgba(23, 116, 76, 0.16);
+}
+
+.payment-status-card--success strong {
+  color: var(--success);
+}
+
+.payment-window {
+  min-height: 100vh;
+  padding: 1.25rem;
+  background:
+    radial-gradient(circle at top left, rgba(13, 47, 111, 0.1), transparent 24%),
+    linear-gradient(180deg, #f7f9fd 0%, #edf2f9 100%);
+}
+
+.payment-window__shell {
+  width: min(980px, 100%);
+  margin: 0 auto;
+}
+
+.payment-window__shell--compact {
+  width: min(620px, 100%);
+}
+
+.payment-window__panel,
+.payment-window__header,
+.payment-success {
+  display: grid;
+  gap: 1rem;
+}
+
+.payment-frame {
+  overflow: hidden;
+  min-height: 70vh;
+  border-radius: 24px;
+  border: 1px solid rgba(13, 47, 111, 0.12);
+  background: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.payment-frame__iframe {
+  width: 100%;
+  height: 70vh;
+  border: 0;
+  background: #fff;
+}
+
+.payment-window__actions,
+.payment-success__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
 .facts-grid {
   margin-top: 1.25rem;
 }
@@ -1038,6 +1114,8 @@ svg {
   .section__head,
   .guide-card__footer,
   .scholarship-card__footer,
+  .payment-window__actions,
+  .payment-success__actions,
   .application-step__header,
   .application-step__actions {
     flex-direction: column;
@@ -1065,6 +1143,12 @@ svg {
 @media (max-width: 640px) {
   .button {
     width: 100%;
+  }
+
+  .payment-frame,
+  .payment-frame__iframe {
+    min-height: 62vh;
+    height: 62vh;
   }
 
   .hero__panel,

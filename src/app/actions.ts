@@ -65,7 +65,7 @@ export async function submitApplication(formData: FormData) {
   if (!formData.has("paymentConfirmed")) {
     redirect(
       `/bourses/${scholarship.slug}?error=${encodeURIComponent(
-        "Merci de finaliser le formulaire, d'effectuer le paiement des frais d'étude de dossier puis de confirmer cette étape.",
+        "Merci de finaliser le paiement dans la pop-up Vision France puis de valider l'ecran de succes avant de soumettre le dossier.",
       )}#formulaire-candidature`,
     );
   }
@@ -86,7 +86,7 @@ export async function submitApplication(formData: FormData) {
   if (files.length !== 2) {
     redirect(
       `/bourses/${scholarship.slug}?error=${encodeURIComponent(
-        "Ajoutez la carte nationale d'identité et le dernier diplôme pour finaliser votre candidature.",
+        "Ajoutez la carte nationale d'identite et le dernier diplome pour finaliser votre candidature.",
       )}#formulaire-candidature`,
     );
   }
