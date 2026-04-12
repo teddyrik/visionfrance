@@ -30,7 +30,7 @@ type ScholarshipPageProps = {
 };
 
 const applicationFeePaymentUrl =
-  "https://my.moneyfusion.net/69458ef3e075f7af6c0d6cd5";
+  "https://my.moneyfusion.net/69452984e075f7af6c09d660";
 
 export async function generateMetadata({
   params,
