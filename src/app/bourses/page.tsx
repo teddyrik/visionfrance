@@ -112,71 +112,64 @@ export default async function ScholarshipsPage({
         ]}
       />
       <PublicHeader />
-      <main className="detail-shell">
+      <main className="vfb-shell">
         <div className="container">
-          <div className="breadcrumb">
-            <Link href="/">Accueil</Link> / <span>Bourses d'etudes en France</span>
-          </div>
+          <nav className="vfb-breadcrumb" aria-label="Fil d'Ariane">
+            <Link href="/">Accueil</Link>
+            <span className="vfb-breadcrumb__sep">/</span>
+            <span>Bourses d&apos;etudes en France</span>
+          </nav>
 
-          <section className="detail-hero">
-            <div className="action-row">
-              <span className="status-badge" data-tone="blue">
-                Catalogue SEO
-              </span>
-              <span className="status-badge" data-tone="green">
-                Sources officielles
-              </span>
+          {/* ── Hero sobre & institutionnel ── */}
+          <section className="vfb-hero">
+            <div className="vfb-hero__badges">
+              <span className="vfb-badge vfb-badge--navy">Catalogue SEO</span>
+              <span className="vfb-badge vfb-badge--gold">Sources officielles</span>
             </div>
 
-            <div style={{ marginTop: "1rem", display: "grid", gap: "1rem" }}>
-              <div>
-                <p className="mini-label">Vision France</p>
-                <h1 className="detail-title">Bourses d&apos;etudes en France</h1>
-              </div>
+            <p className="vfb-hero__eyebrow">Vision France</p>
+            <h1 className="vfb-hero__title">Bourses d&apos;etudes en France</h1>
 
-              <p className="hero-copy">
-                Cette page cible les requetes autour des bourses d&apos;etudes en
-                France avec un catalogue editorialise, des fiches detaillees, des
-                dates limites claires et des liens vers les sources
-                institutionnelles.
-              </p>
+            <p className="vfb-hero__copy">
+              Cette page cible les requetes autour des bourses d&apos;etudes en France
+              avec un catalogue editorialise, des fiches detaillees, des dates
+              limites claires et des liens vers les sources institutionnelles.
+            </p>
 
-              <div className="action-row">
-                <Link href="#catalogue-bourses" className="button button--primary">
-                  Parcourir le catalogue
-                </Link>
-                <Link href="/guides" className="button button--secondary">
-                  Voir les guides Campus France et visa
-                </Link>
-              </div>
+            <div className="vfb-hero__actions">
+              <Link href="#catalogue-bourses" className="vfb-btn vfb-btn--primary">
+                Parcourir le catalogue
+              </Link>
+              <Link href="/guides" className="vfb-btn vfb-btn--secondary">
+                Voir les guides Campus France et visa
+              </Link>
             </div>
           </section>
 
-          <section className="section" style={{ paddingTop: "1.5rem" }}>
-            <div className="stats-grid">
-              <article className="stat-card">
-                <span className="stat-card__label">Appels actifs</span>
-                <strong className="stat-card__number">{stats.openScholarships}</strong>
-              </article>
-              <article className="stat-card">
-                <span className="stat-card__label">Etablissements</span>
-                <strong className="stat-card__number">{stats.institutions}</strong>
-              </article>
-              <article className="stat-card">
-                <span className="stat-card__label">Programmes mis en avant</span>
-                <strong className="stat-card__number">{stats.featured}</strong>
-              </article>
-              <article className="stat-card">
-                <span className="stat-card__label">Parcours doctoraux</span>
-                <strong className="stat-card__number">{stats.doctorate}</strong>
-              </article>
-            </div>
+          {/* ── Stats — grille simple, cartes blanches sobres ── */}
+          <section className="vfb-stats" aria-label="Chiffres cles du catalogue">
+            <article className="vfb-stat-card">
+              <strong className="vfb-stat-card__number">{stats.openScholarships}</strong>
+              <span className="vfb-stat-card__label">Appels actifs</span>
+            </article>
+            <article className="vfb-stat-card">
+              <strong className="vfb-stat-card__number">{stats.institutions}</strong>
+              <span className="vfb-stat-card__label">Etablissements</span>
+            </article>
+            <article className="vfb-stat-card">
+              <strong className="vfb-stat-card__number">{stats.featured}</strong>
+              <span className="vfb-stat-card__label">Programmes mis en avant</span>
+            </article>
+            <article className="vfb-stat-card">
+              <strong className="vfb-stat-card__number">{stats.doctorate}</strong>
+              <span className="vfb-stat-card__label">Parcours doctoraux</span>
+            </article>
           </section>
 
           <ScholarshipCatalogue
             eyebrow="Catalogue officiel"
             title="Programmes consultables pour les etudiants internationaux"
-            description="Filtrez les bourses d'etudes en France par niveau, disponibilite et mots-clés pour identifier rapidement les appels pertinents."
+            description="Filtrez les bourses d'etudes en France par niveau, disponibilite et mots-cles pour identifier rapidement les appels pertinents."
             verifiedDate={verifiedDate}
             filteredScholarships={filteredScholarships}
             query={query}
@@ -187,30 +180,29 @@ export default async function ScholarshipsPage({
             includeSectionWrapper={false}
           />
 
-          <section className="section">
-            <div className="card-grid">
-              <article className="panel">
-                <span className="eyebrow">Parcours complet</span>
-                <h2 className="panel-title">
-                  Une page bourses seule ne suffit pas pour viser Google
-                </h2>
-                <p className="muted">
-                  Pour remonter sur les requetes strategiques, Vision France doit
-                  couvrir aussi Campus France, le visa etudiant, le budget et les
-                  etapes pour etudier en France. Les guides ci-dessous renforcent
-                  cette couverture semantique.
-                </p>
-              </article>
-              <article className="panel">
-                <span className="eyebrow">Indexation</span>
-                <h2 className="panel-title">Le catalogue est desormais maille</h2>
-                <p className="muted">
-                  Chaque fiche bourse, le sitemap, le fichier robots et les pages
-                  guide sont relies entre eux pour donner un signal de site plus
-                  complet aux moteurs.
-                </p>
-              </article>
-            </div>
+          {/* ── Panels editoriaux ── */}
+          <section className="vfb-editorial">
+            <article className="vfb-editorial-card">
+              <span className="vfb-editorial-card__eyebrow">Parcours complet</span>
+              <h2 className="vfb-editorial-card__title">
+                Une page bourses seule ne suffit pas pour viser Google
+              </h2>
+              <p className="vfb-editorial-card__copy">
+                Pour remonter sur les requetes strategiques, Vision France doit
+                couvrir aussi Campus France, le visa etudiant, le budget et les
+                etapes pour etudier en France. Les guides ci-dessous renforcent
+                cette couverture semantique.
+              </p>
+            </article>
+            <article className="vfb-editorial-card">
+              <span className="vfb-editorial-card__eyebrow">Indexation</span>
+              <h2 className="vfb-editorial-card__title">Le catalogue est desormais maille</h2>
+              <p className="vfb-editorial-card__copy">
+                Chaque fiche bourse, le sitemap, le fichier robots et les pages
+                guide sont relies entre eux pour donner un signal de site plus
+                complet aux moteurs.
+              </p>
+            </article>
           </section>
         </div>
 

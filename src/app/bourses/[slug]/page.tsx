@@ -100,6 +100,25 @@ export default async function ScholarshipPage({
   const error = firstQueryValue(messages.error);
   const status = getScholarshipStatusMeta(scholarship.status);
 
+  const processSteps = [
+    {
+      title: "Remplissage du dossier",
+      copy: "Le candidat complete d'abord son formulaire et prepare les justificatifs obligatoires.",
+    },
+    {
+      title: "Paiement puis soumission",
+      copy: "Les frais d'etude de dossier sont regles apres validation du formulaire, avant l'envoi final de la candidature.",
+    },
+    {
+      title: "Instruction du dossier",
+      copy: "Verification des pieces, controle administratif et mise a jour du statut de candidature.",
+    },
+    {
+      title: "Transmission aux etablissements",
+      copy: "L'universite ou l'ecole est notifiee pour poursuivre le processus academique avec le candidat.",
+    },
+  ];
+
   return (
     <>
       <JsonLd
@@ -113,224 +132,189 @@ export default async function ScholarshipPage({
         ]}
       />
       <PublicHeader />
-      <main className="detail-shell">
+      <main className="vfd-shell">
         <div className="container">
-          <div className="breadcrumb">
-            <Link href="/">Accueil</Link> / <Link href="/bourses">Bourses</Link> /{" "}
+          <nav className="vfd-breadcrumb" aria-label="Fil d'Ariane">
+            <Link href="/">Accueil</Link>
+            <span className="vfd-breadcrumb__sep">/</span>
+            <Link href="/bourses">Bourses</Link>
+            <span className="vfd-breadcrumb__sep">/</span>
             <span>{scholarship.title}</span>
-          </div>
+          </nav>
 
-          <section className="detail-hero">
-            <div className="action-row">
+          {/* ── Hero ── */}
+          <section className="vfd-hero">
+            <div className="vfd-hero__badges">
               <StatusBadge label={status.label} tone={status.tone} />
-              <span className="status-badge" data-tone="slate">
-                {scholarship.level}
-              </span>
+              <span className="vfd-badge vfd-badge--neutral">{scholarship.level}</span>
             </div>
 
-            <div style={{ marginTop: "1rem", display: "grid", gap: "1rem" }}>
-              <div>
-                <p className="mini-label">{scholarship.institution}</p>
-                <h1 className="detail-title">{scholarship.title}</h1>
-              </div>
+            <p className="vfd-hero__eyebrow">{scholarship.institution}</p>
+            <h1 className="vfd-hero__title">{scholarship.title}</h1>
+            <p className="vfd-hero__copy">{scholarship.summary}</p>
 
-              <p className="hero-copy">{scholarship.summary}</p>
-
-              <div className="action-row">
-                <Link href="#formulaire-candidature" className="button button--primary">
-                  Commencer la candidature
-                </Link>
-                <Link href="/bourses" className="button button--secondary">
-                  Retour au catalogue
-                </Link>
-              </div>
+            <div className="vfd-hero__actions">
+              <Link href="#formulaire-candidature" className="vfd-btn vfd-btn--primary">
+                Commencer la candidature
+              </Link>
+              <Link href="/bourses" className="vfd-btn vfd-btn--secondary">
+                Retour au catalogue
+              </Link>
             </div>
 
-            <div className="facts-grid">
-              <div className="detail-fact">
+            <div className="vfd-facts">
+              <div className="vfd-fact">
                 <strong>Echeance</strong>
                 <span>{formatScholarshipDeadline(scholarship)}</span>
               </div>
-              <div className="detail-fact">
+              <div className="vfd-fact">
                 <strong>Couverture</strong>
                 <span>{scholarship.coverage}</span>
               </div>
-              <div className="detail-fact">
+              <div className="vfd-fact">
                 <strong>Langue</strong>
                 <span>{scholarship.language}</span>
               </div>
-              <div className="detail-fact">
+              <div className="vfd-fact">
                 <strong>Duree</strong>
                 <span>{scholarship.duration}</span>
               </div>
-              <div className="detail-fact">
+              <div className="vfd-fact">
                 <strong>Lieu</strong>
                 <span>{scholarship.location}</span>
               </div>
-              <div className="detail-fact">
+              <div className="vfd-fact">
                 <strong>Public cible</strong>
                 <span>{scholarship.audience}</span>
               </div>
             </div>
           </section>
 
-          <div className="detail-grid" style={{ marginTop: "1.5rem" }}>
-            <article className="panel">
-              <div className="application-form">
-                <div>
-                  <span className="eyebrow">Presentation</span>
-                  <h2 className="panel-title">A propos du programme</h2>
-                </div>
-                <p className="muted">{scholarship.description}</p>
+          {/* ── Corps : contenu + sidebar candidature ── */}
+          <div className="vfd-grid">
+            <article className="vfd-main">
+              <section className="vfd-block">
+                <span className="vfd-eyebrow">Presentation</span>
+                <h2 className="vfd-block__title">A propos du programme</h2>
+                <p className="vfd-block__copy">{scholarship.description}</p>
+              </section>
 
-                <div>
-                  <h3 className="panel-title">Ce que finance la bourse</h3>
-                  <ul className="muted guide-bullets">
-                    {scholarship.benefits.map((benefit) => (
-                      <li key={benefit}>{benefit}</li>
-                    ))}
-                  </ul>
-                </div>
+              <section className="vfd-block">
+                <h3 className="vfd-block__subtitle">Ce que finance la bourse</h3>
+                <ul className="vfd-bullets">
+                  {scholarship.benefits.map((benefit) => (
+                    <li key={benefit}>{benefit}</li>
+                  ))}
+                </ul>
+              </section>
 
-                <div>
-                  <h3 className="panel-title">Conditions d'eligibilite</h3>
-                  <ul className="muted guide-bullets">
-                    {scholarship.eligibility.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
+              <section className="vfd-block">
+                <h3 className="vfd-block__subtitle">Conditions d&apos;eligibilite</h3>
+                <ul className="vfd-bullets">
+                  {scholarship.eligibility.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </section>
 
-                <div>
-                  <h3 className="panel-title">Pieces demandees</h3>
-                  <ul className="muted guide-bullets">
-                    {scholarship.requiredDocuments.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                  <p className="muted">
-                    Des pieces complementaires peuvent etre demandees par
-                    l'etablissement apres une preselection.
-                  </p>
-                </div>
+              <section className="vfd-block">
+                <h3 className="vfd-block__subtitle">Pieces demandees</h3>
+                <ul className="vfd-bullets">
+                  {scholarship.requiredDocuments.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+                <p className="vfd-block__note">
+                  Des pieces complementaires peuvent etre demandees par
+                  l&apos;etablissement apres une preselection.
+                </p>
+              </section>
 
-                <div className="panel">
-                  <div>
-                    <span className="eyebrow">Source officielle</span>
-                    <h3 className="panel-title">{scholarship.officialSource}</h3>
-                  </div>
-                  <p className="muted">
-                    Fiche editoriale verifiee le {scholarship.verifiedAt ?? "2026-03-19"} a
-                    partir de la publication institutionnelle.
-                  </p>
-                  <a
-                    href={scholarship.officialUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button button--secondary"
-                  >
-                    Ouvrir la source officielle
-                  </a>
-                </div>
+              {/* Source officielle */}
+              <section className="vfd-source-card">
+                <span className="vfd-eyebrow">Source officielle</span>
+                <h3 className="vfd-source-card__title">{scholarship.officialSource}</h3>
+                <p className="vfd-block__note">
+                  Fiche editoriale verifiee le {scholarship.verifiedAt ?? "2026-03-19"} a
+                  partir de la publication institutionnelle.
+                </p>
+                <a
+                  href={scholarship.officialUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="vfd-btn vfd-btn--secondary"
+                >
+                  Ouvrir la source officielle
+                </a>
+              </section>
 
-                <figure className="detail-editorial">
-                  <Image
-                    src={editorialMedia.parisCampus.src}
-                    alt={editorialMedia.parisCampus.alt}
-                    width={editorialMedia.parisCampus.width}
-                    height={editorialMedia.parisCampus.height}
-                    className="detail-editorial__image"
-                  />
-                  <figcaption className="detail-editorial__caption">
-                    <span className="mini-label">Cadre d'etudes</span>
-                    <strong>
-                      Une presentation plus institutionnelle des campus et des
-                      etablissements.
-                    </strong>
-                  </figcaption>
-                </figure>
+              {/* Image éditoriale */}
+              <figure className="vfd-editorial">
+                <Image
+                  src={editorialMedia.parisCampus.src}
+                  alt={editorialMedia.parisCampus.alt}
+                  width={editorialMedia.parisCampus.width}
+                  height={editorialMedia.parisCampus.height}
+                  className="vfd-editorial__image"
+                />
+                <figcaption className="vfd-editorial__caption">
+                  <span className="vfd-mini-label">Cadre d&apos;etudes</span>
+                  <strong>
+                    Une presentation plus institutionnelle des campus et des
+                    etablissements.
+                  </strong>
+                </figcaption>
+              </figure>
 
-                <div className="panel">
-                  <div>
-                    <span className="eyebrow">Circuit de traitement</span>
-                    <h3 className="panel-title">Comment votre dossier est traite</h3>
-                  </div>
+              {/* Circuit de traitement — liste simple sobre */}
+              <section className="vfd-process">
+                <span className="vfd-eyebrow">Circuit de traitement</span>
+                <h3 className="vfd-block__subtitle">Comment votre dossier est traite</h3>
 
-                  <div className="timeline-item">
-                    <span className="step-index">1</span>
-                    <div className="timeline-item__body">
-                      <strong>Remplissage du dossier</strong>
-                      <span className="muted">
-                        Le candidat complete d'abord son formulaire et prepare les
-                        justificatifs obligatoires.
+                <ol className="vfd-process__list">
+                  {processSteps.map((step, index) => (
+                    <li key={step.title} className="vfd-process__item">
+                      <span className="vfd-process__index">
+                        {String(index + 1).padStart(2, "0")}
                       </span>
-                    </div>
-                  </div>
-
-                  <div className="timeline-item">
-                    <span className="step-index">2</span>
-                    <div className="timeline-item__body">
-                      <strong>Paiement puis soumission</strong>
-                      <span className="muted">
-                        Les frais d'etude de dossier sont regles apres validation du
-                        formulaire, avant l'envoi final de la candidature.
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="timeline-item">
-                    <span className="step-index">3</span>
-                    <div className="timeline-item__body">
-                      <strong>Instruction du dossier</strong>
-                      <span className="muted">
-                        Verification des pieces, controle administratif et mise a
-                        jour du statut de candidature.
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="timeline-item">
-                    <span className="step-index">4</span>
-                    <div className="timeline-item__body">
-                      <strong>Transmission aux etablissements</strong>
-                      <span className="muted">
-                        L'universite ou l'ecole est notifiee pour poursuivre le
-                        processus academique avec le candidat.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                      <div className="vfd-process__body">
+                        <strong>{step.title}</strong>
+                        <span>{step.copy}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </section>
             </article>
 
-            <aside className="detail-side" id="formulaire-candidature">
-              <section className="detail-side__card">
-                <span className="eyebrow">Candidature</span>
-                <h2 className="panel-title">Deposer votre dossier en 2 etapes</h2>
-                <p className="muted">
+            <aside className="vfd-side" id="formulaire-candidature">
+              <section className="vfd-side-card">
+                <span className="vfd-eyebrow">Candidature</span>
+                <h2 className="vfd-side-card__title">Deposer votre dossier en 2 etapes</h2>
+                <p className="vfd-side-card__copy">
                   Etape 1 : remplir le formulaire complet et joindre les pieces.
                   Etape 2 : proceder au paiement, renseigner la reference puis
                   soumettre la candidature.
                 </p>
               </section>
 
-              <section className="detail-side__card">
-                <span className="eyebrow">Guides associes</span>
-                <h2 className="panel-title">Preparer Campus France et le visa</h2>
-                <p className="muted">
+              <section className="vfd-side-card">
+                <span className="vfd-eyebrow">Guides associes</span>
+                <h2 className="vfd-side-card__title">Preparer Campus France et le visa</h2>
+                <p className="vfd-side-card__copy">
                   Cette fiche est desormais reliee aux pages guide qui couvrent le
                   visa etudiant, Campus France et le parcours pour etudier en
                   France.
                 </p>
-                <div className="guide-link-stack">
-                  <Link href="/guides/campus-france" className="inline-link">
-                    Comprendre Campus France
+                <div className="vfd-link-stack">
+                  <Link href="/guides/campus-france" className="vfd-inline-link">
+                    Comprendre Campus France →
                   </Link>
-                  <Link href="/guides/visa-etudiant-france" className="inline-link">
-                    Preparer le visa etudiant
+                  <Link href="/guides/visa-etudiant-france" className="vfd-inline-link">
+                    Preparer le visa etudiant →
                   </Link>
-                  <Link href="/guides/etudier-en-france" className="inline-link">
-                    Planifier ses etudes en France
+                  <Link href="/guides/etudier-en-france" className="vfd-inline-link">
+                    Planifier ses etudes en France →
                   </Link>
                 </div>
               </section>
