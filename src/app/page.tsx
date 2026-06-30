@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/json-ld";
 import { PublicHeader } from "@/components/public-header";
 import { ScholarshipCatalogue } from "@/components/scholarship-catalogue";
 import { SiteFooter } from "@/components/site-footer";
+import { StatusBadge } from "@/components/status-badge";
 import { getScholarships } from "@/lib/data";
 import { editorialMedia } from "@/lib/editorial-media";
 import {
@@ -80,6 +81,92 @@ const partners = [
   },
 ] as const;
 
+type StatusTone = "blue" | "green" | "amber" | "red" | "slate";
+
+type ValueProp = {
+  mark: string;
+  title: string;
+  description: string;
+};
+
+const valueProps: ValueProp[] = [
+  {
+    mark: "C",
+    title: "Catalogue verifie",
+    description:
+      "Fiches detaillees, criteres d'eligibilite, echeance claire et lien direct vers la source officielle de chaque bourse.",
+  },
+  {
+    mark: "G",
+    title: "Guides Campus France & visa",
+    description:
+      "Des pages dediees pour comprendre Campus France, le visa etudiant et les etapes pour etudier en France.",
+  },
+  {
+    mark: "S",
+    title: "Suivi de dossier",
+    description:
+      "Un formulaire unique, un statut visible a chaque etape et une transmission directe aux etablissements partenaires.",
+  },
+];
+
+type DossierStage = {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  badgeLabel: string;
+  tone: StatusTone;
+};
+
+const dossierStages: DossierStage[] = [
+  {
+    id: "depot",
+    code: "01",
+    title: "Depot du dossier",
+    description:
+      "Le candidat choisit une bourse, ouvre le formulaire associe et transmet un dossier complet.",
+    badgeLabel: "Recu",
+    tone: "blue",
+  },
+  {
+    id: "instruction",
+    code: "02",
+    title: "Instruction Vision France",
+    description:
+      "L'equipe verifie les pieces, qualifie le dossier et envoie un email de confirmation.",
+    badgeLabel: "En instruction",
+    tone: "amber",
+  },
+  {
+    id: "preselection",
+    code: "03",
+    title: "Preselection",
+    description:
+      "Les dossiers complets et eligibles sont retenus pour la suite de la procedure.",
+    badgeLabel: "Preselection",
+    tone: "amber",
+  },
+  {
+    id: "transmission",
+    code: "04",
+    title: "Transmission a l'etablissement",
+    description:
+      "L'universite ou l'ecole partenaire recoit le dossier pour poursuivre l'instruction.",
+    badgeLabel: "Transmis",
+    tone: "blue",
+  },
+  {
+    id: "decision",
+    code: "05",
+    title: "Decision finale",
+    description:
+      "Le candidat est informe par email du statut final de sa candidature.",
+    badgeLabel: "Decision",
+    tone: "slate",
+  },
+];
+
 type HomePageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
@@ -127,153 +214,131 @@ export default async function Home({ searchParams }: HomePageProps) {
         ]}
       />
       <PublicHeader />
-      <main>
-        <section className="hero">
-          <div className="container">
-            <div className="hero__panel">
-              <div className="hero__grid">
-                <div className="hero__content">
-                  <span className="eyebrow">Hub editorial Vision France</span>
-                  <h1 className="display-title">
-                    Bourses d&apos;etudes en France, Campus France et visa etudiant
-                    sur une seule plateforme.
-                  </h1>
-                  <p className="hero-copy">
-                    Vision France combine un catalogue de bourses d&apos;etudes en
-                    France, des pages guide pour Campus France et le visa
-                    etudiant, ainsi qu&apos;un parcours de candidature plus clair
-                    pour etudier en France.
-                  </p>
-                  <div className="hero__actions">
-                    <Link href="/bourses" className="button button--primary">
-                      Explorer les bourses
-                    </Link>
-                    <Link href="/guides" className="button button--secondary">
-                      Lire les guides
-                    </Link>
-                  </div>
+      <main className="vf-home">
+        {/* ---------- Hero ---------- */}
+        <section className="vf-hero">
+          <div className="container vf-hero__inner">
+            <div className="vf-hero__lead">
+              <span className="eyebrow vf-hero__eyebrow">Vision France</span>
+              <h1 className="vf-hero__title">
+                Trouvez votre bourse d&apos;etudes en France et{" "}
+                <span className="vf-hero__title-accent">suivez votre dossier</span> jusqu&apos;a
+                la decision.
+              </h1>
+              <p className="vf-hero__copy">
+                Catalogue de bourses, guides Campus France et visa etudiant, et un
+                parcours de candidature suivi de bout en bout &mdash; reunis sur une
+                seule plateforme.
+              </p>
 
-                  <div className="feature-grid">
-                    <article className="feature-card">
-                      <span className="feature-card__icon">01</span>
-                      <div>
-                        <h2 className="panel-title">Catalogue public</h2>
-                        <p className="muted">
-                          Fiches bourses detaillees, criteres d&apos;eligibilite,
-                          source officielle et echeance claire.
-                        </p>
-                      </div>
-                    </article>
-                    <article className="feature-card">
-                      <span className="feature-card__icon">02</span>
-                      <div>
-                        <h2 className="panel-title">Guides SEO cibles</h2>
-                        <p className="muted">
-                          Pages dediees pour Campus France, visa etudiant et le
-                          parcours complet pour etudier en France.
-                        </p>
-                      </div>
-                    </article>
-                    <article className="feature-card">
-                      <span className="feature-card__icon">03</span>
-                      <div>
-                        <h2 className="panel-title">Instruction centralisee</h2>
-                        <p className="muted">
-                          Formulaire unique, suivi des dossiers et transmission aux
-                          etablissements partenaires.
-                        </p>
-                      </div>
-                    </article>
-                  </div>
+              <div className="vf-hero__actions">
+                <Link href="/bourses" className="button button--primary">
+                  Explorer les bourses
+                </Link>
+                <Link href="/guides" className="button button--secondary">
+                  Lire les guides
+                </Link>
+              </div>
+
+              <ul className="vf-hero__points">
+                <li>
+                  <b>01</b> Catalogue verifie sur les sources officielles
+                </li>
+                <li>
+                  <b>02</b> Guides Campus France et visa etudiant
+                </li>
+                <li>
+                  <b>03</b> Statut du dossier suivi par email, a chaque etape
+                </li>
+              </ul>
+            </div>
+
+            <div className="vf-hero__visual">
+              <figure className="vf-hero__photo vf-hero__photo--main">
+                <Image
+                  src={editorialMedia.studentFocus.src}
+                  alt={editorialMedia.studentFocus.alt}
+                  width={editorialMedia.studentFocus.width}
+                  height={editorialMedia.studentFocus.height}
+                  priority
+                />
+              </figure>
+
+              <figure className="vf-hero__photo vf-hero__photo--secondary">
+                <Image
+                  src={editorialMedia.parisUniversity.src}
+                  alt={editorialMedia.parisUniversity.alt}
+                  width={editorialMedia.parisUniversity.width}
+                  height={editorialMedia.parisUniversity.height}
+                />
+              </figure>
+
+              <article className="vf-hero__seal">
+                <span className="vf-hero__seal-label">Catalogue verifie</span>
+                <strong className="vf-hero__seal-date">{verifiedDate}</strong>
+                <p>
+                  Fiches mises a jour a partir des publications officielles des
+                  universites et ecoles partenaires.
+                </p>
+              </article>
+
+              <div className="vf-hero__stats">
+                <div className="vf-stat">
+                  <strong>{stats.openScholarships}</strong>
+                  <span>appels actifs</span>
                 </div>
-
-                <div className="hero__stats">
-                  <div className="hero-editorial-layout">
-                    <figure className="hero-editorial hero-editorial--primary">
-                      <Image
-                        src={editorialMedia.studentFocus.src}
-                        alt={editorialMedia.studentFocus.alt}
-                        width={editorialMedia.studentFocus.width}
-                        height={editorialMedia.studentFocus.height}
-                        className="hero-editorial__image"
-                        priority
-                      />
-                      <figcaption className="hero-editorial__caption">
-                        <span className="mini-label">Candidatures internationales</span>
-                        <strong>
-                          Un parcours plus lisible pour les recherches bourses,
-                          visa et Campus France.
-                        </strong>
-                      </figcaption>
-                    </figure>
-
-                    <figure className="hero-editorial hero-editorial--secondary">
-                      <Image
-                        src={editorialMedia.parisUniversity.src}
-                        alt={editorialMedia.parisUniversity.alt}
-                        width={editorialMedia.parisUniversity.width}
-                        height={editorialMedia.parisUniversity.height}
-                        className="hero-editorial__image"
-                      />
-                      <figcaption className="hero-editorial__caption hero-editorial__caption--compact">
-                        <strong>
-                          Des programmes relies aux universites et ecoles
-                          partenaires.
-                        </strong>
-                      </figcaption>
-                    </figure>
-                  </div>
-
-                  <article className="hero-highlight__card">
-                    <span className="mini-label">Catalogue actualise</span>
-                    <strong>Fiches verifiees a partir des publications officielles</strong>
-                    <p>
-                      Mise a jour editoriale du catalogue le {verifiedDate}, avec
-                      liens directs vers les appels institutionnels et les pages de
-                      reference.
-                    </p>
-                  </article>
-
-                  <div className="hero-highlight__lines">
-                    <div className="hero-highlight__line">
-                      <span>1</span>
-                      <div>
-                        <strong>{stats.openScholarships} appels actifs</strong>
-                        <p className="muted">ouverts, proches de cloture ou a venir</p>
-                      </div>
-                    </div>
-                    <div className="hero-highlight__line">
-                      <span>2</span>
-                      <div>
-                        <strong>{stats.institutions} etablissements couverts</strong>
-                        <p className="muted">
-                          universites, ecoles et programmes gradues
-                        </p>
-                      </div>
-                    </div>
-                    <div className="hero-highlight__line">
-                      <span>3</span>
-                      <div>
-                        <strong>{stats.officialSources} sources officielles</strong>
-                        <p className="muted">liens institutionnels rattaches a chaque fiche</p>
-                      </div>
-                    </div>
-                    <div className="hero-highlight__line">
-                      <span>4</span>
-                      <div>
-                        <strong>{stats.featured} programmes a la une</strong>
-                        <p className="muted">selection editoriale des dispositifs structurants</p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="vf-stat">
+                  <strong>{stats.institutions}</strong>
+                  <span>etablissements</span>
+                </div>
+                <div className="vf-stat">
+                  <strong>{stats.officialSources}</strong>
+                  <span>sources officielles</span>
+                </div>
+                <div className="vf-stat">
+                  <strong>{stats.featured}</strong>
+                  <span>a la une</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="section">
-          <div className="container" style={{ marginBottom: "3rem" }}>
+        {/* ---------- Value props ---------- */}
+        <section className="section vf-values">
+          <div className="container">
+            <div className="section__head">
+              <div>
+                <span className="eyebrow">Pourquoi Vision France</span>
+                <h2 className="section-title">
+                  Un seul endroit pour la bourse, le dossier et le suivi
+                </h2>
+              </div>
+              <p className="section-copy">
+                Trois piliers structurent la plateforme, du premier clic jusqu&apos;a
+                la decision de l&apos;etablissement.
+              </p>
+            </div>
+
+            <div className="vf-values__grid">
+              {valueProps.map((item) => (
+                <article key={item.title} className="vf-value-card">
+                  <span className="vf-value-card__mark" aria-hidden="true">
+                    {item.mark}
+                  </span>
+                  <div>
+                    <h3 className="panel-title">{item.title}</h3>
+                    <p className="muted">{item.description}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Partners ---------- */}
+        <section className="vf-partners">
+          <div className="container">
             <div className="section__head">
               <div>
                 <span className="eyebrow">Partenaires institutionnels</span>
@@ -288,26 +353,17 @@ export default async function Home({ searchParams }: HomePageProps) {
               </p>
             </div>
 
-            <div className="partners-grid">
+            <div className="vf-partners__row">
               {partners.map((partner) => (
                 <a
                   key={partner.website}
                   href={partner.website}
-                  className="partner-card"
+                  className="vf-partner"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <div className="partner-card__logo">
-                    <img src={partner.logo} alt={`Logo ${partner.name}`} />
-                  </div>
-                  <div className="partner-card__meta">
-                    <strong>{partner.name}</strong>
-                    <span>
-                      {partner.website
-                        .replace(/^https?:\/\/(www\.)?/, "")
-                        .replace(/\/$/, "")}
-                    </span>
-                  </div>
+                  <img src={partner.logo} alt={`Logo ${partner.name}`} />
+                  <span>{partner.name}</span>
                 </a>
               ))}
             </div>
@@ -333,81 +389,71 @@ export default async function Home({ searchParams }: HomePageProps) {
           sectionId="guides"
         />
 
-        <section className="section" id="processus">
+        {/* ---------- Dossier tracker (signature element) ---------- */}
+        <section className="section vf-tracker" id="processus">
           <div className="container">
             <div className="section__head">
               <div>
-                <span className="eyebrow">Processus candidat</span>
+                <span className="eyebrow">Suivi de dossier</span>
                 <h2 className="section-title">
-                  Un circuit lisible du depot jusqu&apos;a la decision finale
+                  Cinq etapes, un seul tableau de suivi
                 </h2>
               </div>
               <p className="section-copy">
-                Le site ne se limite pas a l&apos;indexation Google: il structure
-                aussi un parcours concret pour les candidatures internationales.
+                Chaque dossier suit le meme circuit, du depot jusqu&apos;a la
+                decision de l&apos;etablissement.
               </p>
             </div>
-            <div className="impact-grid">
-              <article className="impact-card">
-                <span className="impact-card__icon">A</span>
-                <h3 className="panel-title">1. Depot du dossier</h3>
-                <p className="muted">
-                  Le candidat choisit une bourse, ouvre le formulaire avec le
-                  bouton Postuler et transmet son dossier complet.
-                </p>
-              </article>
-              <article className="impact-card">
-                <span className="impact-card__icon">B</span>
-                <h3 className="panel-title">2. Instruction Vision France</h3>
-                <p className="muted">
-                  Les equipes Vision France controlent les pieces, qualifient le
-                  statut et gardent une trace horodatee de chaque action.
-                </p>
-              </article>
-              <article className="impact-card">
-                <span className="impact-card__icon">C</span>
-                <h3 className="panel-title">3. Relais vers les etablissements</h3>
-                <p className="muted">
-                  Lorsque le dossier est mature, la plateforme alerte
-                  l&apos;universite ou l&apos;ecole afin qu&apos;elle poursuive la
-                  procedure.
-                </p>
-              </article>
-            </div>
+
+            <ol className="vf-tracker__rail">
+              {dossierStages.map((stage) => (
+                <li key={stage.id} className="vf-tracker__stage">
+                  <span className="vf-tracker__node" aria-hidden="true">
+                    {stage.code}
+                  </span>
+                  <div className="vf-tracker__card">
+                    <StatusBadge label={stage.badgeLabel} tone={stage.tone} />
+                    <h3 className="panel-title">{stage.title}</h3>
+                    <p className="muted">{stage.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
 
-        <section className="section" id="suivi">
+        {/* ---------- Communication ---------- */}
+        <section className="vf-comms" id="suivi">
           <div className="container">
             <div className="section__head">
               <div>
-                <span className="eyebrow">Suivi de candidature</span>
-                <h2 className="section-title">Un parcours transparent pour chaque dossier</h2>
+                <span className="eyebrow">Communication</span>
+                <h2 className="section-title">
+                  Le candidat est informe a chaque etape
+                </h2>
               </div>
             </div>
-            <div className="impact-grid">
-              <article className="impact-card">
-                <span className="impact-card__icon">M</span>
+
+            <div className="vf-comms__grid">
+              <article className="vf-comms__card">
                 <h3 className="panel-title">Mails automatiques</h3>
                 <p className="muted">
-                  Confirmation de depot, passage en instruction, transmission aux
-                  etablissements et decision finale.
+                  Confirmation de depot, passage en instruction, transmission et
+                  decision finale, par email.
                 </p>
               </article>
-              <article className="impact-card">
-                <span className="impact-card__icon">S</span>
+              <article className="vf-comms__card">
                 <h3 className="panel-title">Statuts visibles</h3>
                 <p className="muted">
-                  Chaque dossier suit un chemin lisible : recu, en instruction,
-                  preselection, transmission ou decision finale.
+                  Le statut du dossier (recu, en instruction, preselection,
+                  transmission, decision) reste consultable.
                 </p>
               </article>
-              <article className="impact-card">
-                <span className="impact-card__icon">E</span>
+              <article className="vf-comms__card">
                 <h3 className="panel-title">Etablissements informes</h3>
                 <p className="muted">
-                  Les ecoles et universites partenaires recoivent les dossiers a
-                  l&apos;etape prevue pour poursuivre la procedure.
+                  Les ecoles et universites partenaires recoivent le dossier au
+                  bon moment pour poursuivre la procedure.
                 </p>
               </article>
             </div>
@@ -415,6 +461,7 @@ export default async function Home({ searchParams }: HomePageProps) {
         </section>
       </main>
       <SiteFooter />
+
     </>
   );
 }

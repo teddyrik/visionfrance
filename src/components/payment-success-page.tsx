@@ -46,10 +46,10 @@ export function PaymentSuccessPage({ paymentUrl }: PaymentSuccessPageProps) {
       <div className="payment-window__shell payment-window__shell--compact">
         <section className="panel payment-window__panel">
           <div className="payment-window__header">
-            <span className="eyebrow">Paiement reussi</span>
+            <span className="eyebrow">Paiement réussi</span>
             <h1 className="panel-title">Valider le retour vers le formulaire</h1>
             <p className="muted">
-              Saisissez la reference de paiement affichee par MoneyFusion pour
+              Saisissez la référence de paiement affichée par pour
               approuver la soumission du dossier sur Vision France.
             </p>
           </div>
@@ -76,7 +76,7 @@ export function PaymentSuccessPage({ paymentUrl }: PaymentSuccessPageProps) {
 
             {submitted ? (
               <div className="notice notice--success">
-                Paiement approuve. Si cette fenetre ne se ferme pas seule, revenez
+                Paiement approuvé. Si cette fenetre ne se ferme pas seule, revenez
                 au formulaire principal.
               </div>
             ) : null}

@@ -1,64 +1,55 @@
 "use client";
 
-import { useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type PaymentPopupFrameProps = {
-  paymentUrl: string;
+  checkoutUrl: string;
 };
 
-export function PaymentPopupFrame({ paymentUrl }: PaymentPopupFrameProps) {
-  const router = useRouter();
-  const successUrl = useMemo(
-    () => `/paiement/succes?paymentUrl=${encodeURIComponent(paymentUrl)}`,
-    [paymentUrl],
-  );
+export function PaymentPopupFrame({
+  checkoutUrl,
+}: PaymentPopupFrameProps) {
+  useEffect(() => {
+    if (checkoutUrl) {
+      window.location.replace(checkoutUrl);
+    }
+  }, [checkoutUrl]);
 
   return (
     <main className="payment-window">
       <div className="payment-window__shell">
         <section className="panel payment-window__panel">
           <div className="payment-window__header">
-            <span className="eyebrow">Paiement du dossier</span>
-            <h1 className="panel-title">Finaliser le paiement en pop-up</h1>
+            <span className="eyebrow">Paiement sécurisé</span>
+
+            <h1 className="panel-title">
+              Redirection vers Chariow...
+            </h1>
+
             <p className="muted">
-              Effectuez le paiement dans cette fenetre. Lorsque MoneyFusion vous a
-              affiche la fin de paiement, cliquez sur le bouton de confirmation
-              ci-dessous pour revenir au formulaire avec votre reference.
+              Vous allez être redirigé automatiquement vers la plateforme de
+              paiement sécurisée.
             </p>
           </div>
 
-          <div className="payment-frame">
-            <iframe
-              src={paymentUrl}
-              title="Paiement MoneyFusion"
-              className="payment-frame__iframe"
-              allow="payment *"
-            />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: "3rem 0",
+            }}
+          >
+            <div className="spinner" />
           </div>
 
           <div className="payment-window__actions">
             <a
-              href={paymentUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="button button--secondary"
-            >
-              Ouvrir dans un onglet
-            </a>
-            <button
-              type="button"
+              href={checkoutUrl}
               className="button button--accent"
-              onClick={() => router.push(successUrl)}
             >
-              J&apos;ai termine le paiement
-            </button>
+              Si rien ne se passe, cliquez ici
+            </a>
           </div>
-
-          <p className="payment-note">
-            Si le paiement n&apos;est pas alle jusqu&apos;au bout, n&apos;avancez pas vers
-            l&apos;ecran de succes.
-          </p>
         </section>
       </div>
     </main>
